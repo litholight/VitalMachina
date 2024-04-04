@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Mario.Common\Mario.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OpenRA-SDL2-CS" Version="1.0.40" />
+    <PackageReference Include="sdl2.nuget" Version="2.30.0" />
+    <PackageReference Include="sdl2_image.nuget" Version="2.8.2" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <!-- Update this ItemGroup to correctly reference the assets' path -->
+  <ItemGroup>
+    <!-- Assuming the Mario.Common project is at the same directory level as Mario.Native.MacOS -->
+    <Content Include="..\Mario.Common\Assets\*.png">
+      <Link>Assets\%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

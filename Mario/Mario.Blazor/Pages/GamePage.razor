@@ -1,0 +1,80 @@
+﻿@page "/"
+@using Mario.Common.Input
+@using Mario.Common.Initialization
+@using Mario.Common.Models
+@using Mario.Common.Abstractions
+@using Mario.Blazor.WebImplementations
+@inject IJSRuntime JSRuntime
+@implements IDisposable
+
+<canvas @ref="gameCanvas" width="800" height="600"></canvas>
+
+@code {
+    private ElementReference gameCanvas;
+    private GameState gameState;
+    private BlazorGraphicsRenderer graphicsRenderer;
+    private DateTime lastUpdate = DateTime.Now;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            graphicsRenderer = new BlazorGraphicsRenderer(JSRuntime);
+            await graphicsRenderer.InitializeCanvas(gameCanvas);
+
+            // Initialize the game state using the GameInitializer
+            gameState = GameInitializer.InitializeGame();
+
+            // Make sure the graphics renderer is aware of the canvas
+            await graphicsRenderer.Initialize();
+
+            // Subscribe to keyboard events for input handling
+            await JSRuntime.InvokeVoidAsync("listenForKeyboardEvents", DotNetObjectReference.Create(this));
+
+             // Start the game loop
+            await JSRuntime.InvokeVoidAsync("startGameLoop", DotNetObjectReference.Create(this));
+        }
+    }
+
+    [JSInvokable]
+    public async Task OnKeyDown(string key)
+    {
+        var action = InputTranslator.TranslateKeyToGameAction(key);
+        if (action.HasValue)
+        {
+            gameState.HandleInput(action.Value, true); // Indicate that the key is pressed
+        }
+
+        await UpdateAndRender();
+    }
+
+    [JSInvokable]
+    public async Task OnKeyUp(string key)
+    {
+        var action = InputTranslator.TranslateKeyToGameAction(key);
+        if (action.HasValue)
+        {
+            gameState.HandleInput(action.Value, false); // Indicate that the key is released
+        }
+
+        await UpdateAndRender();
+    }
+    
+    [JSInvokable]
+    public async Task UpdateAndRender()
+    {
+        var now = DateTime.Now;
+        var deltaTime = (now - lastUpdate).TotalMilliseconds / 1000.0;
+        lastUpdate = now;
+
+        gameState.Update((float)deltaTime);
+        await graphicsRenderer.ClearScreen();
+        await gameState.SceneManager.CurrentScene.Render(graphicsRenderer);
+        await graphicsRenderer.Present();
+    }
+
+    public void Dispose()
+    {
+        // Clean up resources if necessary
+    }
+}
