@@ -40,20 +40,6 @@ namespace Mario.Common.Factories
             return enemy;
         }
 
-        public static GameObject CreateGround(float x, float y, float width, float height)
-        {
-            return new GameObject
-            {
-                Id = "Ground", // Unique identifier for the ground object
-                X = x,
-                Y = y,
-                Width = width,
-                Height = height,
-                Color = Color.Brown, // Assuming you have a way to set color or texture
-                // If using sprites/textures, set the appropriate properties here
-            };
-        }
-
         // You can continue adding factory methods for different types of game objects here.
     }
 }
