@@ -4,6 +4,7 @@
 @using Mario.Common.Models
 @using Mario.Common.Abstractions
 @using Mario.Blazor.WebImplementations
+@using PhysicsEngine.Core.Physics;
 @inject IJSRuntime JSRuntime
 @implements IDisposable
 
@@ -13,6 +14,7 @@
     private ElementReference gameCanvas;
     private GameState gameState;
     private BlazorGraphicsRenderer graphicsRenderer;
+    private BasicPhysicsEngine physicsEngine;
     private DateTime lastUpdate = DateTime.Now;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -21,9 +23,10 @@
         {
             graphicsRenderer = new BlazorGraphicsRenderer(JSRuntime);
             await graphicsRenderer.InitializeCanvas(gameCanvas);
+            physicsEngine = new BasicPhysicsEngine();
 
             // Initialize the game state using the GameInitializer
-            gameState = GameInitializer.InitializeGame();
+            gameState = GameInitializer.InitializeGame(physicsEngine);
 
             // Make sure the graphics renderer is aware of the canvas
             await graphicsRenderer.Initialize();
@@ -67,10 +70,33 @@
         var deltaTime = (now - lastUpdate).TotalMilliseconds / 1000.0;
         lastUpdate = now;
 
+        // Apply gravity and update the physics engine
+        physicsEngine.ApplyGravity();
+        physicsEngine.Update((float)deltaTime);
+
+        // Sync physics bodies with game objects
+        // Assuming you implement a method similar to SyncPhysicsWithGameObjects
+        SyncPhysicsWithGameObjects(physicsEngine, gameState.SceneManager.CurrentScene.GameObjects);
+
+        // Update game state and render
         gameState.Update((float)deltaTime);
         await graphicsRenderer.ClearScreen();
         await gameState.SceneManager.CurrentScene.Render(graphicsRenderer);
         await graphicsRenderer.Present();
+    }
+
+    private void SyncPhysicsWithGameObjects(BasicPhysicsEngine physicsEngine, IEnumerable<GameObject> gameObjects)
+    {
+        foreach (var body in physicsEngine.GetAllBodies())
+        {
+            var gameObject = gameObjects.FirstOrDefault(go => go.Id == body.Id);
+            if (gameObject != null)
+            {
+                gameObject.X = body.X;
+                gameObject.Y = body.Y;
+                // Update other necessary properties...
+            }
+        }
     }
 
     public void Dispose()
