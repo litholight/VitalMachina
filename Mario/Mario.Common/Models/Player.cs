@@ -6,11 +6,13 @@ namespace Mario.Common.Models
 {
     public class Player : GameObject, IInputHandler
     {
+        public PhysicsEngine.Core.Physics.PhysicsBody PhysicsBody { get; set; }
         public float Speed { get; set; } = 80.0f;
         public PlayerState CurrentState { get; private set; } = PlayerState.StandingRight;
 
         public Player()
         {
+            Id = "Player";
             Width = 66;
             Height = 30;
             Color = Color.Orange;
@@ -65,9 +67,11 @@ namespace Mario.Common.Models
                 {
                     case GameAction.MoveLeft:
                         CurrentState = PlayerState.MovingLeft;
+                        PhysicsBody.VelocityX = -Speed;
                         break;
                     case GameAction.MoveRight:
                         CurrentState = PlayerState.MovingRight;
+                        PhysicsBody.VelocityX = Speed;
                         break;
                 }
             }
@@ -78,9 +82,11 @@ namespace Mario.Common.Models
                 {
                     case GameAction.MoveLeft when CurrentState == PlayerState.MovingLeft:
                         CurrentState = PlayerState.StandingLeft;
+                        PhysicsBody.VelocityX = 0;
                         break;
                     case GameAction.MoveRight when CurrentState == PlayerState.MovingRight:
                         CurrentState = PlayerState.StandingRight;
+                        PhysicsBody.VelocityX = 0;
                         break;
                 }
             }

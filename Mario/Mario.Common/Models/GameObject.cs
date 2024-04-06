@@ -4,6 +4,7 @@ namespace Mario.Common.Models
 {
     public class GameObject
     {
+        public string Id { get; set; } // Unique identifier
         public float X { get; set; } = 20; // Initial X position
         public float Y { get; set; } = 20; // Initial Y position
         public float Width { get; set; } = 50; // Width

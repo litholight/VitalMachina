@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": ".NET Core Launch (console) - Mario.Native.MacOS",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build - Mario.Native.MacOS",
+            "program": "${workspaceFolder}/Mario/Mario.Native.MacOS/bin/Debug/net8.0/Mario.Native.MacOS.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Mario/Mario.Native.MacOS",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "env": {
+                "DYLD_LIBRARY_PATH": "/opt/homebrew/opt/sdl2/lib:/opt/homebrew/opt/sdl2_image/lib"
+            }
+        }
+    ]
+}

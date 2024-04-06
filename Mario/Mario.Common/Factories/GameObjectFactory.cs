@@ -26,6 +26,7 @@ namespace Mario.Common.Factories
             // Create a new GameObject instance for the enemy
             GameObject enemy = new GameObject
             {
+                Id = "Enemy", // Set the ID of the enemy
                 X = startX, // Set the starting X position
                 Y = startY, // Set the starting Y position
                 Width = 50, // Set the width of the enemy

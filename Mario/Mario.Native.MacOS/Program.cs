@@ -5,6 +5,7 @@ using Mario.Common.Input;
 using Mario.Common.Models;
 using Mario.Common.Scenes; // Make sure to include the namespace for SceneManager
 using Mario.Common.Services;
+using PhysicsEngine.Core.Physics;
 using SDL2;
 
 namespace Mario.Native.MacOS
@@ -16,8 +17,11 @@ namespace Mario.Native.MacOS
             var graphicsRenderer = new SDL2GraphicsRenderer();
             await graphicsRenderer.Initialize();
 
-            // Initialize game state and get it ready for use
-            var gameState = GameInitializer.InitializeGame();
+            // Create the physics engine instance
+            BasicPhysicsEngine physicsEngine = new BasicPhysicsEngine();
+
+            // Initialize the game with the physics engine
+            var gameState = GameInitializer.InitializeGame(physicsEngine);
 
             var lastTick = DateTime.Now;
             bool running = true;
@@ -27,6 +31,15 @@ namespace Mario.Native.MacOS
                 var currentTick = DateTime.Now;
                 var deltaTime = (float)(currentTick - lastTick).TotalSeconds;
                 lastTick = currentTick;
+
+                physicsEngine.ApplyGravity();
+
+                // Update the physics engine first
+                physicsEngine.Update(deltaTime);
+
+                // Inside your game loop, after updating physics:
+                var currentSceneGameObjects = gameState.SceneManager.CurrentScene.GameObjects;
+                SyncPhysicsWithGameObjects(physicsEngine, currentSceneGameObjects);
 
                 // Clear the screen at the start of each frame
                 await graphicsRenderer.ClearScreen();
@@ -73,6 +86,23 @@ namespace Mario.Native.MacOS
             }
 
             graphicsRenderer.Cleanup(); // Clean up SDL resources
+        }
+
+        private static void SyncPhysicsWithGameObjects(
+            IPhysicsEngine physicsEngine,
+            IEnumerable<GameObject> gameObjects
+        )
+        {
+            foreach (var body in physicsEngine.GetAllBodies())
+            {
+                var gameObject = gameObjects.FirstOrDefault(go => go.Id == body.Id);
+                if (gameObject != null)
+                {
+                    gameObject.X = body.X;
+                    gameObject.Y = body.Y;
+                    // Update other properties as needed
+                }
+            }
         }
     }
 
