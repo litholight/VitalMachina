@@ -14,7 +14,7 @@
     private ElementReference gameCanvas;
     private GameState gameState;
     private BlazorGraphicsRenderer graphicsRenderer;
-    private BasicPhysicsEngine physicsEngine;
+    private BasicPhysicsEngine marioWorld;
     private DateTime lastUpdate = DateTime.Now;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -23,10 +23,10 @@
         {
             graphicsRenderer = new BlazorGraphicsRenderer(JSRuntime);
             await graphicsRenderer.InitializeCanvas(gameCanvas);
-            physicsEngine = new BasicPhysicsEngine();
+            marioWorld = new BasicPhysicsEngine();
 
             // Initialize the game state using the GameInitializer
-            gameState = GameInitializer.InitializeGame(physicsEngine);
+            gameState = GameInitializer.InitializeGame(marioWorld);
 
             // Make sure the graphics renderer is aware of the canvas
             await graphicsRenderer.Initialize();
@@ -71,12 +71,12 @@
         lastUpdate = now;
 
         // Apply gravity and update the physics engine
-        physicsEngine.ApplyGravity();
-        physicsEngine.Update((float)deltaTime);
+        marioWorld.ApplyGravity();
+        marioWorld.Update((float)deltaTime);
 
         // Sync physics bodies with game objects
         // Assuming you implement a method similar to SyncPhysicsWithGameObjects
-        SyncPhysicsWithGameObjects(physicsEngine, gameState.SceneManager.CurrentScene.GameObjects);
+        SyncPhysicsWithGameObjects(marioWorld, gameState.SceneManager.CurrentScene.GameObjects);
 
         // Update game state and render
         gameState.Update((float)deltaTime);
@@ -87,7 +87,7 @@
 
     private void SyncPhysicsWithGameObjects(BasicPhysicsEngine physicsEngine, IEnumerable<GameObject> gameObjects)
     {
-        foreach (var body in physicsEngine.GetAllBodies())
+        foreach (var body in marioWorld.GetAllBodies())
         {
             var gameObject = gameObjects.FirstOrDefault(go => go.Id == body.Id);
             if (gameObject != null)

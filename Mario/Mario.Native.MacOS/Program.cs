@@ -18,10 +18,10 @@ namespace Mario.Native.MacOS
             await graphicsRenderer.Initialize();
 
             // Create the physics engine instance
-            BasicPhysicsEngine physicsEngine = new BasicPhysicsEngine();
+            BasicPhysicsEngine marioWorld = new BasicPhysicsEngine();
 
             // Initialize the game with the physics engine
-            var gameState = GameInitializer.InitializeGame(physicsEngine);
+            var gameState = GameInitializer.InitializeGame(marioWorld);
 
             var lastTick = DateTime.Now;
             bool running = true;
@@ -32,14 +32,14 @@ namespace Mario.Native.MacOS
                 var deltaTime = (float)(currentTick - lastTick).TotalSeconds;
                 lastTick = currentTick;
 
-                physicsEngine.ApplyGravity();
+                marioWorld.ApplyGravity();
 
                 // Update the physics engine first
-                physicsEngine.Update(deltaTime);
+                marioWorld.Update(deltaTime);
 
                 // Inside your game loop, after updating physics:
                 var currentSceneGameObjects = gameState.SceneManager.CurrentScene.GameObjects;
-                SyncPhysicsWithGameObjects(physicsEngine, currentSceneGameObjects);
+                SyncPhysicsWithGameObjects(marioWorld, currentSceneGameObjects);
 
                 // Clear the screen at the start of each frame
                 await graphicsRenderer.ClearScreen();
