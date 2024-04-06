@@ -21,10 +21,27 @@ namespace PhysicsEngine.Core.Physics
 
         public void Update(float deltaTime)
         {
-            foreach (var body in _bodies)
+            ApplyGravity();
+            DetectCollisions(); // A new method to detect and resolve collisions
+
+            foreach (var body in _bodies.Where(b => !b.IsStatic))
             {
                 body.X += body.VelocityX * deltaTime;
                 body.Y += body.VelocityY * deltaTime;
+            }
+        }
+
+        private void DetectCollisions()
+        {
+            // Example of a very basic ground collision detection
+            foreach (var body in _bodies.Where(b => !b.IsStatic))
+            {
+                var ground = _bodies.FirstOrDefault(b => b.IsStatic); // Assuming there's only one ground object for simplicity
+                if (ground != null && body.Y + body.Height >= ground.Y)
+                {
+                    body.Y = ground.Y - body.Height; // Adjust Y position to sit on the ground
+                    body.VelocityY = 0; // Stop downward movement
+                }
             }
         }
 

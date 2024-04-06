@@ -31,7 +31,7 @@ namespace Mario.Common.Factories
                 Y = startY, // Set the starting Y position
                 Width = 50, // Set the width of the enemy
                 Height = 50, // Set the height of the enemy
-                Color = Color.Brown // Give the enemy a brown color for now
+                Color = Color.Orange // Give the enemy a brown color for now
             };
 
             // If you have specific logic or properties for enemies, you can extend the GameObject class and create an Enemy class
@@ -39,6 +39,21 @@ namespace Mario.Common.Factories
 
             return enemy;
         }
+
+        public static GameObject CreateGround(float x, float y, float width, float height)
+        {
+            return new GameObject
+            {
+                Id = "Ground", // Unique identifier for the ground object
+                X = x,
+                Y = y,
+                Width = width,
+                Height = height,
+                Color = Color.Brown, // Assuming you have a way to set color or texture
+                // If using sprites/textures, set the appropriate properties here
+            };
+        }
+
         // You can continue adding factory methods for different types of game objects here.
     }
 }
