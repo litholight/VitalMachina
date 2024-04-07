@@ -11,7 +11,7 @@ namespace PhysicsEngine.Core.Physics
 
         public void RemoveBody(PhysicsBody body) => _bodies.Remove(body);
 
-        public void ApplyGravity(float gravityScale = 0.8f)
+        public void ApplyGravity(float gravityScale = 9.8f)
         {
             foreach (var body in _bodies)
             {

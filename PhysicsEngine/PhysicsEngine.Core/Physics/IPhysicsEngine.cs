@@ -6,7 +6,7 @@ namespace PhysicsEngine.Core.Physics
     {
         void AddBody(PhysicsBody body);
         void RemoveBody(PhysicsBody body);
-        void ApplyGravity(float gravityScale = 0.8f);
+        void ApplyGravity(float gravityScale = 9.8f);
         void Update(float deltaTime);
         List<PhysicsBody> GetAllBodies();
     }

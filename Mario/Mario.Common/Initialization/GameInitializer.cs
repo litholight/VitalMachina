@@ -34,7 +34,8 @@ namespace Mario.Common.Initialization
             {
                 Id = enemy.Id,
                 X = enemy.X,
-                Y = enemy.Y
+                Y = enemy.Y,
+                Height = enemy.Height
             };
             physicsEngine.AddBody(enemyPhysicsBody);
 
@@ -42,7 +43,7 @@ namespace Mario.Common.Initialization
             {
                 Id = "Ground",
                 X = 0, // Assuming ground spans the entire bottom of your scene
-                Y = 550, // Position Y at the bottom of your scene
+                Y = 600, // Position Y at the bottom of your scene
                 Width = 800, // Match your scene width
                 Height = 0, // Arbitrary height for the ground
                 IsStatic = true
