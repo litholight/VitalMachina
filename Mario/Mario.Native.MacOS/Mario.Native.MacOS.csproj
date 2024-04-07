@@ -8,6 +8,7 @@
     <PackageReference Include="OpenRA-SDL2-CS" Version="1.0.40" />
     <PackageReference Include="sdl2.nuget" Version="2.30.0" />
     <PackageReference Include="sdl2_image.nuget" Version="2.8.2" />
+    <PackageReference Include="sdl2_ttf.nuget" Version="2.22.0" />
   </ItemGroup>
 
   <PropertyGroup>

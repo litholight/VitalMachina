@@ -17,11 +17,13 @@ namespace Mario.Native.MacOS
         {
 
             bool showBoundingBoxes = Environment.GetEnvironmentVariable("DEBUG_SHOW_BOUNDING_BOXES") == "true";
+            bool showPointerCoordinates = Environment.GetEnvironmentVariable("DEBUG_SHOW_POINTER_COORDINATES") == "true";
 
             // Initialize your debug config with the fetched flags
             var debugConfig = new DebugConfig
             {
-                ShowBoundingBoxes = showBoundingBoxes
+                ShowBoundingBoxes = showBoundingBoxes,
+                ShowPointerCoordinates = showPointerCoordinates
             };
 
 
@@ -43,7 +45,7 @@ namespace Mario.Native.MacOS
                 var deltaTime = (float)(currentTick - lastTick).TotalSeconds;
                 lastTick = currentTick;
 
-                marioWorld.ApplyGravity();
+                // marioWorld.ApplyGravity();
 
                 // Update the physics engine first
                 marioWorld.Update(deltaTime);
@@ -100,6 +102,27 @@ namespace Mario.Native.MacOS
                 // Render the current scene
                 await gameState.SceneManager.CurrentScene.Render(graphicsRenderer);
 
+                if (debugConfig.ShowPointerCoordinates)
+                {
+                    int pointerX, pointerY;
+                    SDL.SDL_GetMouseState(out pointerX, out pointerY);
+
+                    string pointerCoordsText = $"Pointer: ({pointerX}, {pointerY})";
+                    // Define the font path and size
+                    string fontPath = "/Users/seanstoneburner/VitalMachina/Mario/Mario.Common/Assets/Roboto-Regular.ttf";
+                    int fontSize = 24; // Or any size you prefer
+
+                    // Call the updated DrawText method with fontPath and fontSize
+                    await graphicsRenderer.DrawText(
+                        pointerCoordsText,
+                        fontPath,
+                        fontSize,
+                        Color.White,
+                        10, // X position
+                        10  // Y position
+                    );
+                }
+
                 // Update the screen with the current rendering
                 await graphicsRenderer.Present();
             }
@@ -134,7 +157,7 @@ namespace Mario.Native.MacOS
                 int width = (int)gameObject.Width;
                 int height = (int)gameObject.Height;
 
-                graphicsRenderer.DrawRectangle(Color.Red, x, y, width, height);
+                graphicsRenderer.DrawBoundingBox(Color.Red, x, y, width, height);
             }
         }
     }
@@ -159,7 +182,4 @@ namespace Mario.Native.MacOS
             }
         }
     }
-
-
-
 }

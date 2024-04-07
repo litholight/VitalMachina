@@ -7,8 +7,8 @@ namespace Mario.Common.Models
         public string Id { get; set; } // Unique identifier
         public float X { get; set; } = 20; // Initial X position
         public float Y { get; set; } = 20; // Initial Y position
-        public float Width { get; set; } = 50; // Width
-        public float Height { get; set; } = 50; // Height
+        public float Width { get; set; }
+        public float Height { get; set; }
         public Color Color { get; set; } = Color.Green; // Default to red for visibility
         public string TexturePath { get; set; }
         public SpriteSheet SpriteSheet { get; set; } // Add this

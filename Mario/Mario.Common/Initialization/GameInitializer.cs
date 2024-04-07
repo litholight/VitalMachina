@@ -24,7 +24,8 @@ namespace Mario.Common.Initialization
             {
                 Id = player.Id,
                 X = player.X,
-                Y = player.Y
+                Y = player.Y,
+                Height = player.Height
             };
             player.PhysicsBody = playerPhysicsBody;
             physicsEngine.AddBody(playerPhysicsBody);
@@ -41,9 +42,9 @@ namespace Mario.Common.Initialization
             {
                 Id = "Ground",
                 X = 0, // Assuming ground spans the entire bottom of your scene
-                Y = 500, // Position Y at the bottom of your scene
+                Y = 550, // Position Y at the bottom of your scene
                 Width = 800, // Match your scene width
-                Height = 50, // Arbitrary height for the ground
+                Height = 0, // Arbitrary height for the ground
                 IsStatic = true
             };
             physicsEngine.AddBody(groundBody);

@@ -21,6 +21,7 @@ namespace Mario.Common.Models
         public static Color Blue => new Color(0, 0, 255);
         public static Color Orange => new Color(255, 165, 0);
         public static Color Brown => new Color(139, 69, 19);
+        public static Color White => new Color(255, 255, 255);
 
         // Add other common colors as needed
 
