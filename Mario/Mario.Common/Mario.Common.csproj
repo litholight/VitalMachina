@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\PhysicsEngine\PhysicsEngine.Core\PhysicsEngine.Core.csproj" />
+    <ProjectReference Include="..\..\GameDevelopmentTools\GameDevelopmentTools.csproj" />
   </ItemGroup>
 
 

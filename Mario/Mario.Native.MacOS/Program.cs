@@ -6,6 +6,7 @@ using Mario.Common.Models;
 using Mario.Common.Scenes; // Make sure to include the namespace for SceneManager
 using Mario.Common.Services;
 using PhysicsEngine.Core.Physics;
+using GameDevelopmentTools;
 using SDL2;
 
 namespace Mario.Native.MacOS
@@ -14,6 +15,16 @@ namespace Mario.Native.MacOS
     {
         static async Task Main(string[] args)
         {
+
+            bool showBoundingBoxes = Environment.GetEnvironmentVariable("DEBUG_SHOW_BOUNDING_BOXES") == "true";
+
+            // Initialize your debug config with the fetched flags
+            var debugConfig = new DebugConfig
+            {
+                ShowBoundingBoxes = showBoundingBoxes
+            };
+
+
             var graphicsRenderer = new SDL2GraphicsRenderer();
             await graphicsRenderer.Initialize();
 
@@ -37,12 +48,20 @@ namespace Mario.Native.MacOS
                 // Update the physics engine first
                 marioWorld.Update(deltaTime);
 
+
+                // Clear the screen at the start of each frame
+                await graphicsRenderer.ClearScreen();
+
                 // Inside your game loop, after updating physics:
                 var currentSceneGameObjects = gameState.SceneManager.CurrentScene.GameObjects;
                 SyncPhysicsWithGameObjects(marioWorld, currentSceneGameObjects);
 
-                // Clear the screen at the start of each frame
-                await graphicsRenderer.ClearScreen();
+                if (debugConfig.ShowBoundingBoxes)
+                {
+                    // This would be a place to invoke debug rendering for bounding boxes
+                    // You would need to implement a method that can render these based on each gameObject
+                    RenderBoundingBoxes(graphicsRenderer, currentSceneGameObjects);
+                }
 
                 // Input handling
                 while (SDL.SDL_PollEvent(out e) != 0)
@@ -104,6 +123,20 @@ namespace Mario.Native.MacOS
                 }
             }
         }
+
+        private static void RenderBoundingBoxes(SDL2GraphicsRenderer graphicsRenderer, IEnumerable<GameObject> gameObjects)
+        {
+            foreach (var gameObject in gameObjects)
+            {
+                // Cast the float values to int before passing them to DrawRectangle
+                int x = (int)gameObject.X;
+                int y = (int)gameObject.Y;
+                int width = (int)gameObject.Width;
+                int height = (int)gameObject.Height;
+
+                graphicsRenderer.DrawRectangle(Color.Red, x, y, width, height);
+            }
+        }
     }
 
     public static class InputTranslator
@@ -126,4 +159,7 @@ namespace Mario.Native.MacOS
             }
         }
     }
+
+
+
 }

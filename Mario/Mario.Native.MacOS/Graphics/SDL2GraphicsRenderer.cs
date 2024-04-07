@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Mario.Common.Abstractions;
 using Mario.Common.Models;
 using Mario.Native.MacOS.NativeBindings;
+using GameDevelopmentTools;
 using SDL2;
 
 namespace Mario.Native.MacOS

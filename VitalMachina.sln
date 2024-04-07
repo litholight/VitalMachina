@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PhysicsEngine", "PhysicsEng
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhysicsEngine.Core", "PhysicsEngine\PhysicsEngine.Core\PhysicsEngine.Core.csproj", "{51E158C8-FB92-48F5-8266-68DA9CF1419D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameDevelopmentTools", "GameDevelopmentTools\GameDevelopmentTools.csproj", "{4510B50B-7781-4340-9865-989C56C92F32}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +36,10 @@ Global
 		{51E158C8-FB92-48F5-8266-68DA9CF1419D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51E158C8-FB92-48F5-8266-68DA9CF1419D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{51E158C8-FB92-48F5-8266-68DA9CF1419D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4510B50B-7781-4340-9865-989C56C92F32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4510B50B-7781-4340-9865-989C56C92F32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4510B50B-7781-4340-9865-989C56C92F32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4510B50B-7781-4340-9865-989C56C92F32}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{41631164-EA77-45DD-8F0A-ED342E17385A} = {A1D59CEE-0C25-41E2-A93A-E6D1BA780C7F}
