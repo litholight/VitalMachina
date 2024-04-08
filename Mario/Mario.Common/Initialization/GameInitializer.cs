@@ -39,6 +39,18 @@ namespace Mario.Common.Initialization
             };
             physicsEngine.AddBody(enemyPhysicsBody);
 
+            // Add a TextObject to the scene to display collision information
+            TextObject collisionInfoDisplay = new TextObject
+            {
+                Id = "CollisionInfoDisplay",
+                Text = "No collisions yet",
+                FontPath = "Mario/Mario.Common/Assets/Roboto-Regular.ttf", // Ensure this points to a valid font file
+                FontSize = 24,
+                Color = Color.White, // Assuming white color for visibility
+                X = 10, // Position the text object on the screen as desired
+                Y = 40
+            };
+
             var groundBody = new PhysicsBody
             {
                 Id = "Ground",
@@ -56,6 +68,7 @@ namespace Mario.Common.Initialization
             Scene startScene = new Scene("StartScene");
             startScene.AddGameObject(enemy);
             startScene.AddGameObject(player);
+            startScene.AddGameObject(collisionInfoDisplay);
 
             gameState.SceneManager.AddScene("StartScene", startScene);
             gameState.SceneManager.SwitchToScene("StartScene");

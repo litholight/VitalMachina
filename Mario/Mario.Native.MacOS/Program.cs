@@ -53,6 +53,9 @@ namespace Mario.Native.MacOS
                 // Clear the screen at the start of each frame
                 await graphicsRenderer.ClearScreen();
 
+                // Inside your main game loop, after updating physics and before rendering:
+                UpdateCollisionInfoDisplay(gameState, marioWorld.CollisionResults);
+
                 // Inside your game loop, after updating physics:
                 var currentSceneGameObjects = gameState.SceneManager.CurrentScene.GameObjects;
                 SyncPhysicsWithGameObjects(marioWorld, currentSceneGameObjects);
@@ -128,6 +131,31 @@ namespace Mario.Native.MacOS
             }
 
             graphicsRenderer.Cleanup(); // Clean up SDL resources
+        }
+
+        private static void UpdateCollisionInfoDisplay(
+            GameState gameState,
+            List<CollisionResult> collisionResults
+        )
+        {
+            Scene currentScene = gameState.SceneManager.CurrentScene;
+            TextObject collisionInfoDisplay = currentScene
+                .GameObjects.OfType<TextObject>()
+                .FirstOrDefault(t => t.Id == "CollisionInfoDisplay");
+
+            if (collisionInfoDisplay != null)
+            {
+                if (collisionResults.Any())
+                {
+                    var lastCollision = collisionResults.Last();
+                    collisionInfoDisplay.Text =
+                        $"Last Collision: {lastCollision.OtherBody.Id} at {lastCollision.Direction}";
+                }
+                else
+                {
+                    collisionInfoDisplay.Text = "No collisions";
+                }
+            }
         }
 
         private static void SyncPhysicsWithGameObjects(
