@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
+using GameDevelopmentTools;
 using Mario.Common.Initialization;
 using Mario.Common.Input;
 using Mario.Common.Models;
 using Mario.Common.Scenes; // Make sure to include the namespace for SceneManager
 using Mario.Common.Services;
 using PhysicsEngine.Core.Physics;
-using GameDevelopmentTools;
 using SDL2;
 
 namespace Mario.Native.MacOS
@@ -15,9 +15,10 @@ namespace Mario.Native.MacOS
     {
         static async Task Main(string[] args)
         {
-
-            bool showBoundingBoxes = Environment.GetEnvironmentVariable("DEBUG_SHOW_BOUNDING_BOXES") == "true";
-            bool showPointerCoordinates = Environment.GetEnvironmentVariable("DEBUG_SHOW_POINTER_COORDINATES") == "true";
+            bool showBoundingBoxes =
+                Environment.GetEnvironmentVariable("DEBUG_SHOW_BOUNDING_BOXES") == "true";
+            bool showPointerCoordinates =
+                Environment.GetEnvironmentVariable("DEBUG_SHOW_POINTER_COORDINATES") == "true";
 
             // Initialize your debug config with the fetched flags
             var debugConfig = new DebugConfig
@@ -25,7 +26,6 @@ namespace Mario.Native.MacOS
                 ShowBoundingBoxes = showBoundingBoxes,
                 ShowPointerCoordinates = showPointerCoordinates
             };
-
 
             var graphicsRenderer = new SDL2GraphicsRenderer();
             await graphicsRenderer.Initialize();
@@ -49,7 +49,6 @@ namespace Mario.Native.MacOS
 
                 // Update the physics engine first
                 marioWorld.Update(deltaTime);
-
 
                 // Clear the screen at the start of each frame
                 await graphicsRenderer.ClearScreen();
@@ -104,12 +103,13 @@ namespace Mario.Native.MacOS
 
                 if (debugConfig.ShowPointerCoordinates)
                 {
-                    int pointerX, pointerY;
+                    int pointerX,
+                        pointerY;
                     SDL.SDL_GetMouseState(out pointerX, out pointerY);
 
                     string pointerCoordsText = $"Pointer: ({pointerX}, {pointerY})";
                     // Define the font path and size
-                    string fontPath = "/Users/seanstoneburner/VitalMachina/Mario/Mario.Common/Assets/Roboto-Regular.ttf";
+                    string fontPath = "Mario/Mario.Common/Assets/Roboto-Regular.ttf";
                     int fontSize = 24; // Or any size you prefer
 
                     // Call the updated DrawText method with fontPath and fontSize
@@ -119,7 +119,7 @@ namespace Mario.Native.MacOS
                         fontSize,
                         Color.White,
                         10, // X position
-                        10  // Y position
+                        10 // Y position
                     );
                 }
 
@@ -147,7 +147,10 @@ namespace Mario.Native.MacOS
             }
         }
 
-        private static void RenderBoundingBoxes(SDL2GraphicsRenderer graphicsRenderer, IEnumerable<GameObject> gameObjects)
+        private static void RenderBoundingBoxes(
+            SDL2GraphicsRenderer graphicsRenderer,
+            IEnumerable<GameObject> gameObjects
+        )
         {
             foreach (var gameObject in gameObjects)
             {

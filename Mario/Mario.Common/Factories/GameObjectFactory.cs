@@ -5,9 +5,17 @@ namespace Mario.Common.Factories
 {
     public static class GameObjectFactory
     {
+        private static Player _playerInstance;
+
         public static Player CreatePlayer(AssetManager assets)
         {
-            Player player = new Player
+            if (_playerInstance != null)
+            {
+                throw new InvalidOperationException("Player instance already created.");
+            }
+
+            // Only create a new Player if one doesn't already exist
+            _playerInstance = new Player
             {
                 // Assuming "Player" is the key used when adding the player's sprite sheet in the AssetManager.
                 SpriteSheet = assets.GetSpriteSheet("Player"),
@@ -17,7 +25,7 @@ namespace Mario.Common.Factories
             // Here you could set up additional properties or configurations for the player.
             // e.g., player.Speed = 5.0f;
 
-            return player;
+            return _playerInstance;
         }
 
         // If you have additional game objects, like enemies, you can create methods for them too.
@@ -26,7 +34,7 @@ namespace Mario.Common.Factories
             // Create a new GameObject instance for the enemy
             GameObject enemy = new GameObject
             {
-                Id = "Enemy", // Set the ID of the enemy
+                Type = GameObjectType.Enemy,
                 X = startX, // Set the starting X position
                 Y = startY, // Set the starting Y position
                 Width = 50, // Set the width of the enemy

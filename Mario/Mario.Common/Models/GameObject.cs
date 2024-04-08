@@ -1,10 +1,12 @@
 using Mario.Common.Abstractions;
+using Mario.Common.Services;
 
 namespace Mario.Common.Models
 {
     public class GameObject
     {
         public string Id { get; set; } // Unique identifier
+        public GameObjectType Type { get; set; }
         public float X { get; set; } = 20; // Initial X position
         public float Y { get; set; } = 20; // Initial Y position
         public float Width { get; set; }
@@ -16,6 +18,11 @@ namespace Mario.Common.Models
         private int currentFrame = 0; // Animation frame index
         private float animationTimer = 0f; // Tracks time since last frame change
         public float FrameDuration = 0.1f;
+
+        public GameObject()
+        {
+            Id = IdGenerator.Generate();
+        }
 
         public virtual void Update(float deltaTime)
         {

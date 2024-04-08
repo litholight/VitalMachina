@@ -10,9 +10,10 @@ namespace Mario.Common.Models
         public float Speed { get; set; } = 80.0f;
         public PlayerState CurrentState { get; private set; } = PlayerState.StandingRight;
 
-        public Player()
+        internal Player()
+            : base()
         {
-            Id = "Player";
+            Type = GameObjectType.Player;
             Width = 66;
             Height = 30;
             Color = Color.Orange;
