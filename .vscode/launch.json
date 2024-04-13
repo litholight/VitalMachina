@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": ".NET Core Launch (console) - Mario.Native.MacOS",
+            "name": "Launch on Intel Mac",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build - Mario.Native.MacOS",
@@ -12,7 +12,23 @@
             "console": "internalConsole",
             "stopAtEntry": false,
             "env": {
-                "DYLD_LIBRARY_PATH": "/opt/homebrew/opt/sdl2/lib:/opt/homebrew/opt/sdl2_image/lib"
+                "DYLD_LIBRARY_PATH": "/usr/local/opt/sdl2/lib:/usr/local/opt/sdl2_image/lib:/usr/local/opt/sdl2_ttf/lib",
+                "SDL2_TTF_PATH": "/usr/local/opt/sdl2_ttf/lib/libSDL2_ttf.dylib"
+            }
+        },
+        {
+            "name": "Launch on M1 Mac",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build - Mario.Native.MacOS",
+            "program": "${workspaceFolder}/Mario/Mario.Native.MacOS/bin/Debug/net8.0/Mario.Native.MacOS.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Mario/Mario.Native.MacOS",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "env": {
+                "DYLD_LIBRARY_PATH": "/opt/homebrew/opt/sdl2/lib:/opt/homebrew/opt/sdl2_image/lib:/opt/homebrew/opt/sdl2_ttf/lib",
+                "SDL2_TTF_PATH": "/opt/homebrew/Cellar/sdl2_ttf/2.22.0/lib/libSDL2_ttf-2.0.0.dylib"
             }
         }
     ]

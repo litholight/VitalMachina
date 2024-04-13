@@ -21,31 +21,47 @@ namespace Mario.Native.MacOS
 
         public async Task Initialize()
         {
-            SDL.SDL_Init(SDL.SDL_INIT_VIDEO);
-            SDL_image.IMG_Init(
-                SDL_image.IMG_InitFlags.IMG_INIT_PNG | SDL_image.IMG_InitFlags.IMG_INIT_JPG
-            );
-
-            if (SDL_ttf.TTF_Init() == -1)
+            try
             {
-                Console.WriteLine("SDL_ttf could not initialize! SDL_ttf Error: " + SDL.SDL_GetError());
-                throw new Exception("Failed to initialize SDL_ttf.");
-            }
+                SDL.SDL_Init(SDL.SDL_INIT_VIDEO);
+                SDL_image.IMG_Init(
+                    SDL_image.IMG_InitFlags.IMG_INIT_PNG | SDL_image.IMG_InitFlags.IMG_INIT_JPG
+                );
 
-            window = SDL.SDL_CreateWindow(
-                "Mario Game",
-                SDL.SDL_WINDOWPOS_CENTERED,
-                SDL.SDL_WINDOWPOS_CENTERED,
-                800,
-                600,
-                SDL.SDL_WindowFlags.SDL_WINDOW_SHOWN
-            );
-            renderer = SDL.SDL_CreateRenderer(
-                window,
-                -1,
-                SDL.SDL_RendererFlags.SDL_RENDERER_ACCELERATED
-                    | SDL.SDL_RendererFlags.SDL_RENDERER_PRESENTVSYNC
-            );
+                if (SDL_ttf.TTF_Init() == -1)
+                {
+                    throw new Exception("Failed to initialize SDL_ttf: " + SDL.SDL_GetError());
+                }
+
+                window = SDL.SDL_CreateWindow(
+                    "Mario Game",
+                    SDL.SDL_WINDOWPOS_CENTERED,
+                    SDL.SDL_WINDOWPOS_CENTERED,
+                    800,
+                    600,
+                    SDL.SDL_WindowFlags.SDL_WINDOW_SHOWN
+                );
+                if (window == IntPtr.Zero)
+                {
+                    throw new Exception("Failed to create SDL window: " + SDL.SDL_GetError());
+                }
+
+                renderer = SDL.SDL_CreateRenderer(
+                    window,
+                    -1,
+                    SDL.SDL_RendererFlags.SDL_RENDERER_ACCELERATED | SDL.SDL_RendererFlags.SDL_RENDERER_PRESENTVSYNC
+                );
+                if (renderer == IntPtr.Zero)
+                {
+                    throw new Exception("Failed to create renderer: " + SDL.SDL_GetError());
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Initialization failed: " + ex.Message);
+                Cleanup();
+                throw;
+            }
         }
 
         public async Task ClearScreen()
@@ -158,7 +174,6 @@ namespace Mario.Native.MacOS
 
         public void Cleanup()
         {
-            // Cleanup logic for SDL2 resources
             if (renderer != IntPtr.Zero)
             {
                 SDL.SDL_DestroyRenderer(renderer);
@@ -170,6 +185,7 @@ namespace Mario.Native.MacOS
                 window = IntPtr.Zero;
             }
             SDL_ttf.TTF_Quit();
+            SDL_image.IMG_Quit();
             SDL.SDL_Quit();
         }
 

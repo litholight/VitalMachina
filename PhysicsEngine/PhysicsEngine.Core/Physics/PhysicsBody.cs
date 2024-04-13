@@ -9,6 +9,7 @@ namespace PhysicsEngine.Core.Physics
         public float VelocityY { get; set; }
         public float Mass { get; set; } = 1.0f;
         public bool IsStatic { get; set; } = false; // Indicates if the body is movable
+        public bool IsResting { get; set; } = false;
 
         // Bounding box dimensions for collision detection
         public float Width { get; set; }
