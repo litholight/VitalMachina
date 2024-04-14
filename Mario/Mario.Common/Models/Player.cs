@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Mario.Common.Abstractions;
 using Mario.Common.Input;
+using System.Numerics;
 
 namespace Mario.Common.Models
 {
@@ -74,11 +75,14 @@ namespace Mario.Common.Models
                         CurrentState = PlayerState.MovingRight;
                         PhysicsBody.VelocityX = Speed;
                         break;
+                    case GameAction.Jump:
+                        Jump();
+                        break;
                 }
             }
             else
             {
-                // On key up, transition to standing state if we're currently moving in the direction of the key that was released
+                // Handle key release
                 switch (action)
                 {
                     case GameAction.MoveLeft when CurrentState == PlayerState.MovingLeft:
@@ -90,6 +94,17 @@ namespace Mario.Common.Models
                         PhysicsBody.VelocityX = 0;
                         break;
                 }
+            }
+        }
+
+        private void Jump()
+        {
+            if (PhysicsBody.IsResting)
+            {
+                var jumpForce = new Vector2(0, -40000); // Adjust this force magnitude based on desired jump strength
+                PhysicsBody.ApplyForce(jumpForce);
+                PhysicsBody.IsResting = false;
+                // CurrentState = PlayerState.Jumping; // Assuming there's a jumping state to manage animations
             }
         }
     }
