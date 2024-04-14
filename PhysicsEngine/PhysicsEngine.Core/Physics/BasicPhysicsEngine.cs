@@ -96,11 +96,8 @@ namespace PhysicsEngine.Core.Physics
             if (!isColliding)
                 return new CollisionResult { IsColliding = false };
 
-            // Simple determination of collision direction (improve this as needed)
-            CollisionDirection direction = CollisionDirection.None;
-            // Example simple logic: determine if A is above B
-            if (bodyA.Y + bodyA.Height <= bodyB.Y)
-                direction = CollisionDirection.Bottom;
+            // Determine collision direction
+            CollisionDirection direction = DetermineCollisionDirection(bodyA, bodyB);
 
             return new CollisionResult
             {
@@ -112,9 +109,37 @@ namespace PhysicsEngine.Core.Physics
 
         private CollisionDirection DetermineCollisionDirection(PhysicsBody bodyA, PhysicsBody bodyB)
         {
-            // Placeholder - detailed logic needed to determine exact direction
-            return CollisionDirection.None;
+            // Determine the center points of each body
+            float centerAX = bodyA.X + bodyA.Width / 2;
+            float centerAY = bodyA.Y + bodyA.Height / 2;
+            float centerBX = bodyB.X + bodyB.Width / 2;
+            float centerBY = bodyB.Y + bodyB.Height / 2;
+
+            // Calculate the differences
+            float dx = centerBX - centerAX; // Difference in X
+            float dy = centerBY - centerAY; // Difference in Y
+
+            // Determine the absolute overlap on each axis
+            float overlapX = (bodyA.Width / 2 + bodyB.Width / 2) - Math.Abs(dx);
+            float overlapY = (bodyA.Height / 2 + bodyB.Height / 2) - Math.Abs(dy);
+
+            // Use the overlaps to determine the direction
+            if (overlapX >= overlapY)
+            {
+                if (dy > 0)
+                    return CollisionDirection.Top;
+                else
+                    return CollisionDirection.Bottom;
+            }
+            else
+            {
+                if (dx > 0)
+                    return CollisionDirection.Left;
+                else
+                    return CollisionDirection.Right;
+            }
         }
+
         public List<PhysicsBody> GetAllBodies() => _bodies.ToList();
     }
 }
