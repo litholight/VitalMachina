@@ -25,7 +25,8 @@ namespace Mario.Common.Initialization
                 Id = player.Id,
                 X = player.X,
                 Y = player.Y,
-                Height = player.Height
+                Height = player.Height,
+                Width = player.Width
             };
             player.PhysicsBody = playerPhysicsBody;
             physicsEngine.AddBody(playerPhysicsBody);
@@ -35,7 +36,8 @@ namespace Mario.Common.Initialization
                 Id = enemy.Id,
                 X = enemy.X,
                 Y = enemy.Y,
-                Height = enemy.Height
+                Height = enemy.Height,
+                Width = enemy.Width
             };
             physicsEngine.AddBody(enemyPhysicsBody);
 
@@ -44,7 +46,7 @@ namespace Mario.Common.Initialization
             {
                 Id = "CollisionInfoDisplay",
                 Text = "No collisions yet",
-                FontPath = "Mario/Mario.Common/Assets/Roboto-Regular.ttf", // Ensure this points to a valid font file
+                FontPath = "/Users/seanstoneburner/VitalMachina/Mario/Mario.Common/Assets/Roboto-Regular.ttf", // Ensure this points to a valid font file
                 FontSize = 24,
                 Color = Color.White, // Assuming white color for visibility
                 X = 10, // Position the text object on the screen as desired

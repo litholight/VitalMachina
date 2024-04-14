@@ -92,7 +92,7 @@ namespace Mario.Native.MacOS
 
                     string pointerCoordsText = $"Pointer: ({pointerX}, {pointerY})";
                     // Define the font path and size
-                    string fontPath = "Mario/Mario.Common/Assets/Roboto-Regular.ttf";
+                    string fontPath = "/Users/seanstoneburner/VitalMachina/Mario/Mario.Common/Assets/Roboto-Regular.ttf";
                     int fontSize = 24; // Or any size you prefer
 
                     // Call the updated DrawText method with fontPath and fontSize

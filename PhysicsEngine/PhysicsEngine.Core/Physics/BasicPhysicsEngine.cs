@@ -36,49 +36,52 @@ namespace PhysicsEngine.Core.Physics
         private void DetectCollisions()
         {
             CollisionResults.Clear();
-            var ground = _bodies.FirstOrDefault(b => b.IsStatic);
-            if (ground != null)
+            var ground = _bodies.FirstOrDefault(b => b.IsStatic && b.Id == "Ground"); // Assuming "Ground" is the ID for the ground object
+
+            // Handling ground collision first to manage resting state properly
+            foreach (var body in _bodies.Where(b => !b.IsStatic))
             {
-                foreach (var body in _bodies.Where(b => !b.IsStatic))
+                if (body.Y + body.Height >= ground.Y)
                 {
-                    if (body.Y + body.Height >= ground.Y && !body.IsResting)
+                    if (!body.IsResting)
                     {
                         body.Y = ground.Y - body.Height; // Adjust Y position to sit on the ground
                         body.VelocityY = 0; // Stop downward movement
                         body.IsResting = true;
 
-                        var groundCollision = new CollisionResult
+                        CollisionResults.Add(new CollisionResult
                         {
                             IsColliding = true,
                             Direction = CollisionDirection.Bottom,
                             OtherBody = ground
-                        };
-                        CollisionResults.Add(groundCollision);
+                        });
                     }
-                    else
-                    {
-                        body.IsResting = false;
-                    }
+                }
+                else
+                {
+                    body.IsResting = false;
                 }
             }
 
+            // Check collisions between all bodies, skipping unnecessary checks
             for (int i = 0; i < _bodies.Count; i++)
             {
                 for (int j = i + 1; j < _bodies.Count; j++)
                 {
                     var bodyA = _bodies[i];
                     var bodyB = _bodies[j];
-                    if (bodyA.IsStatic || bodyB.IsStatic || bodyA == bodyB) continue;
+
+                    if (bodyA == bodyB || (bodyA.IsStatic && bodyB.IsStatic)) continue;
 
                     var collisionResult = CheckCollision(bodyA, bodyB);
                     if (collisionResult.IsColliding)
                     {
-                        Console.WriteLine($"Collision detected: {bodyA.Id} with {bodyB.Id}");
                         CollisionResults.Add(collisionResult);
                     }
                 }
             }
         }
+
 
         private void ResolveCollisions()
         {
@@ -87,18 +90,22 @@ namespace PhysicsEngine.Core.Physics
 
         private CollisionResult CheckCollision(PhysicsBody bodyA, PhysicsBody bodyB)
         {
-            // Improved AABB collision detection with direction handling
             bool isColliding = bodyA.X < bodyB.X + bodyB.Width && bodyA.X + bodyA.Width > bodyB.X &&
                                bodyA.Y < bodyB.Y + bodyB.Height && bodyA.Y + bodyA.Height > bodyB.Y;
 
             if (!isColliding)
                 return new CollisionResult { IsColliding = false };
 
-            // Determine collision direction and react accordingly
+            // Simple determination of collision direction (improve this as needed)
+            CollisionDirection direction = CollisionDirection.None;
+            // Example simple logic: determine if A is above B
+            if (bodyA.Y + bodyA.Height <= bodyB.Y)
+                direction = CollisionDirection.Bottom;
+
             return new CollisionResult
             {
                 IsColliding = true,
-                Direction = DetermineCollisionDirection(bodyA, bodyB), // New method to determine precise collision direction
+                Direction = direction,
                 OtherBody = bodyB
             };
         }
