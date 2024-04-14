@@ -8,11 +8,10 @@ namespace Mario.Common.Models
     public class Player : GameObject, IInputHandler
     {
         public PhysicsEngine.Core.Physics.PhysicsBody PhysicsBody { get; set; }
-        public float Speed { get; set; } = 80.0f;
         public PlayerState CurrentState { get; private set; } = PlayerState.StandingRight;
+        private const float MaxSpeed = 400.0f;  // Max speed in units per second
 
-        internal Player()
-            : base()
+        internal Player() : base()
         {
             Type = GameObjectType.Player;
             Width = 66;
@@ -23,76 +22,54 @@ namespace Mario.Common.Models
         public override void Update(float deltaTime)
         {
             base.Update(deltaTime);
-            UpdateMovement(deltaTime);
-            UpdateAnimation();
+            ClampVelocity();
         }
 
-        private void UpdateMovement(float deltaTime)
+        private void ClampVelocity()
         {
-            // Adjust position based on state
-            switch (CurrentState)
+            // Clamp the velocity to the maximum speed
+            if (PhysicsBody.VelocityX > MaxSpeed)
             {
-                case PlayerState.MovingRight:
-                    X += Speed * deltaTime;
-                    break;
-                case PlayerState.MovingLeft:
-                    X -= Speed * deltaTime;
-                    break;
+                PhysicsBody.VelocityX = MaxSpeed;
+            }
+            else if (PhysicsBody.VelocityX < -MaxSpeed)
+            {
+                PhysicsBody.VelocityX = -MaxSpeed;
             }
         }
 
-        private void UpdateAnimation()
+        private void MoveLeft()
         {
-            // Decide which animation to play based on state
-            switch (CurrentState)
+            CurrentState = PlayerState.MovingLeft;
+            PhysicsBody.ApplyForce(new Vector2(-4000, 0));  // Apply a leftward force
+        }
+
+        private void MoveRight()
+        {
+            CurrentState = PlayerState.MovingRight;
+            PhysicsBody.ApplyForce(new Vector2(4000, 0));  // Apply a rightward force
+        }
+
+        private void StopMoving()
+        {
+            // Apply a deceleration force that is proportional to the negative of the current velocity
+            PhysicsBody.ApplyForce(new Vector2(-PhysicsBody.VelocityX * 0.5f, 0));
+
+            // Check if the velocity has reduced to near zero and update the state and animation if it has
+            if (Math.Abs(PhysicsBody.VelocityX) < 50.0f)  // 1.0f can be adjusted based on what you consider as "stopped"
             {
-                case PlayerState.StandingRight:
-                    CurrentAnimation = "SmallFacingRight";
-                    break;
-                case PlayerState.MovingRight:
-                    CurrentAnimation = "SmallMovingRight";
-                    break;
-                case PlayerState.StandingLeft:
+                PhysicsBody.VelocityX = 0;  // Set velocity to zero to stop completely
+
+                // Update state and animation based on the previous direction
+                if (CurrentState == PlayerState.MovingLeft)
+                {
+                    CurrentState = PlayerState.StandingLeft;
                     CurrentAnimation = "SmallFacingLeft";
-                    break;
-                case PlayerState.MovingLeft:
-                    CurrentAnimation = "SmallMovingLeft";
-                    break;
-            }
-        }
-
-        public void HandleAction(GameAction action, bool isKeyDown)
-        {
-            if (isKeyDown)
-            {
-                switch (action)
-                {
-                    case GameAction.MoveLeft:
-                        CurrentState = PlayerState.MovingLeft;
-                        PhysicsBody.VelocityX = -Speed;
-                        break;
-                    case GameAction.MoveRight:
-                        CurrentState = PlayerState.MovingRight;
-                        PhysicsBody.VelocityX = Speed;
-                        break;
-                    case GameAction.Jump:
-                        Jump();
-                        break;
                 }
-            }
-            else
-            {
-                // Handle key release
-                switch (action)
+                else if (CurrentState == PlayerState.MovingRight)
                 {
-                    case GameAction.MoveLeft when CurrentState == PlayerState.MovingLeft:
-                        CurrentState = PlayerState.StandingLeft;
-                        PhysicsBody.VelocityX = 0;
-                        break;
-                    case GameAction.MoveRight when CurrentState == PlayerState.MovingRight:
-                        CurrentState = PlayerState.StandingRight;
-                        PhysicsBody.VelocityX = 0;
-                        break;
+                    CurrentState = PlayerState.StandingRight;
+                    CurrentAnimation = "SmallFacingRight";
                 }
             }
         }
@@ -101,10 +78,39 @@ namespace Mario.Common.Models
         {
             if (PhysicsBody.IsResting)
             {
-                var jumpForce = new Vector2(0, -40000); // Adjust this force magnitude based on desired jump strength
+                var jumpForce = new Vector2(0, -25000);  // Jumping force
                 PhysicsBody.ApplyForce(jumpForce);
                 PhysicsBody.IsResting = false;
-                // CurrentState = PlayerState.Jumping; // Assuming there's a jumping state to manage animations
+            }
+        }
+        public void HandleAction(GameAction action, bool isKeyDown)
+        {
+            if (isKeyDown)
+            {
+                switch (action)
+                {
+                    case GameAction.MoveLeft:
+                        MoveLeft();
+                        CurrentAnimation = "SmallMovingLeft";
+                        break;
+                    case GameAction.MoveRight:
+                        MoveRight();
+                        CurrentAnimation = "SmallMovingRight";
+                        break;
+                    case GameAction.Jump:
+                        Jump();
+                        break;
+                }
+            }
+            else
+            {
+                switch (action)
+                {
+                    case GameAction.MoveLeft:
+                    case GameAction.MoveRight:
+                        StopMoving();
+                        break;
+                }
             }
         }
     }
