@@ -11,22 +11,17 @@ namespace PhysicsEngine.Core.Physics
         public float VelocityY { get; set; }
         public float Mass { get; set; } = 1.0f;
         public bool IsStatic { get; set; } = false; // Indicates if the body is movable
-        public bool IsResting { get; set; } = false;
-
-        // Bounding box dimensions for collision detection
+        public bool IsResting { get; set; } = false; // Only apply friction if resting
         public float Width { get; set; }
         public float Height { get; set; }
-
-        // Vector to accumulate forces applied to the body
         public Vector2 Force { get; set; } = new Vector2(0, 0);
+        public float FrictionCoefficient { get; set; } = 3.5f; // Friction coefficient
 
-        // Method to apply force to the body
         public void ApplyForce(Vector2 force)
         {
             Force += force;
         }
 
-        // Update the physics state of the body
         public void Update(float deltaTime)
         {
             if (!IsStatic)
@@ -35,6 +30,12 @@ namespace PhysicsEngine.Core.Physics
                 VelocityX += (Force.X / Mass) * deltaTime;
                 VelocityY += (Force.Y / Mass) * deltaTime;
 
+                // Apply friction if the body is resting on a surface (e.g., ground)
+                if (IsResting)
+                {
+                    ApplyFriction(deltaTime);
+                }
+
                 // Move the body based on the new velocity
                 X += VelocityX * deltaTime;
                 Y += VelocityY * deltaTime;
@@ -42,6 +43,14 @@ namespace PhysicsEngine.Core.Physics
                 // Reset the force accumulator after each update
                 Force = new Vector2(0, 0);
             }
+        }
+
+        private void ApplyFriction(float deltaTime)
+        {
+            // Apply friction force, which is proportional and opposite to the velocity
+            Vector2 frictionForce = -FrictionCoefficient * new Vector2(VelocityX, VelocityY);
+            VelocityX += frictionForce.X * deltaTime;
+            VelocityY += frictionForce.Y * deltaTime;
         }
     }
 }
