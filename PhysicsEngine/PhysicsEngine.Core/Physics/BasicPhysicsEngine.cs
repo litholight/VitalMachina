@@ -22,14 +22,11 @@ namespace PhysicsEngine.Core.Physics
         public void Update(float deltaTime)
         {
             ApplyGravity();
-            DetectCollisions();
-
-            foreach (var body in _bodies.Where(b => !b.IsStatic))
+            foreach (var body in _bodies)
             {
-                body.X += body.VelocityX * deltaTime;
-                body.Y += body.VelocityY * deltaTime;
+                body.Update(deltaTime);
             }
-
+            DetectCollisions();
             ResolveCollisions();
         }
 

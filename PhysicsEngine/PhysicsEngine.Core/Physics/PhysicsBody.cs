@@ -1,3 +1,5 @@
+using System.Numerics;
+
 namespace PhysicsEngine.Core.Physics
 {
     public class PhysicsBody
@@ -15,6 +17,31 @@ namespace PhysicsEngine.Core.Physics
         public float Width { get; set; }
         public float Height { get; set; }
 
-        // Additional properties like acceleration, forces, etc., can be added here
+        // Vector to accumulate forces applied to the body
+        public Vector2 Force { get; set; } = new Vector2(0, 0);
+
+        // Method to apply force to the body
+        public void ApplyForce(Vector2 force)
+        {
+            Force += force;
+        }
+
+        // Update the physics state of the body
+        public void Update(float deltaTime)
+        {
+            if (!IsStatic)
+            {
+                // Apply accumulated force to velocity
+                VelocityX += (Force.X / Mass) * deltaTime;
+                VelocityY += (Force.Y / Mass) * deltaTime;
+
+                // Move the body based on the new velocity
+                X += VelocityX * deltaTime;
+                Y += VelocityY * deltaTime;
+
+                // Reset the force accumulator after each update
+                Force = new Vector2(0, 0);
+            }
+        }
     }
 }

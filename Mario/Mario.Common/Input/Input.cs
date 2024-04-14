@@ -6,6 +6,7 @@ namespace Mario.Common.Input
         MoveDown,
         MoveLeft,
         MoveRight,
+        Jump
         // Add other actions as needed
     }
 }

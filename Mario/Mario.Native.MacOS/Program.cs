@@ -50,8 +50,6 @@ namespace Mario.Native.MacOS
                 var deltaTime = (float)(currentTick - lastTick).TotalSeconds;
                 lastTick = currentTick;
 
-                // marioWorld.ApplyGravity();
-
                 // Update the physics engine first
                 marioWorld.Update(deltaTime);
 
@@ -193,7 +191,7 @@ namespace Mario.Native.MacOS
                     var actionDown = InputTranslator.TranslateKeyToGameAction(e.key.keysym.sym);
                     if (actionDown.HasValue)
                     {
-                        gameState.HandleInput(actionDown.Value, true); // true for key down
+                        gameState.HandleInput(actionDown.Value, true); // Handle the key down event
                     }
                     break;
 
@@ -201,11 +199,12 @@ namespace Mario.Native.MacOS
                     var actionUp = InputTranslator.TranslateKeyToGameAction(e.key.keysym.sym);
                     if (actionUp.HasValue)
                     {
-                        gameState.HandleInput(actionUp.Value, false); // false for key up
+                        gameState.HandleInput(actionUp.Value, false); // Handle the key up event
                     }
                     break;
             }
         }
+
     }
 
 
@@ -223,10 +222,12 @@ namespace Mario.Native.MacOS
                     return GameAction.MoveLeft;
                 case SDL.SDL_Keycode.SDLK_RIGHT:
                     return GameAction.MoveRight;
-                // Add cases for other keycodes as needed
+                case SDL.SDL_Keycode.SDLK_SPACE: // Assuming spacebar is the jump key
+                    return GameAction.Jump;
                 default:
                     return null; // No action for this key
             }
         }
+
     }
 }
