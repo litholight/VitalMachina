@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Threading.Tasks;
 using GameDevelopmentTools;
 using Mario.Common.Initialization;
@@ -8,7 +9,6 @@ using Mario.Common.Scenes; // Make sure to include the namespace for SceneManage
 using Mario.Common.Services;
 using PhysicsEngine.Core.Physics;
 using SDL2;
-using System.Text;
 
 namespace Mario.Native.MacOS
 {
@@ -16,14 +16,13 @@ namespace Mario.Native.MacOS
     {
         private static DateTime lastUpdate = DateTime.Now;
         private static string lastCollisionText = "";
+
         static async Task Main(string[] args)
         {
             bool showBoundingBoxes =
                 Environment.GetEnvironmentVariable("DEBUG_SHOW_BOUNDING_BOXES") == "true";
             bool showPointerCoordinates =
                 Environment.GetEnvironmentVariable("DEBUG_SHOW_POINTER_COORDINATES") == "true";
-
-
 
             // Initialize your debug config with the fetched flags
             var debugConfig = new DebugConfig
@@ -89,9 +88,13 @@ namespace Mario.Native.MacOS
                     SDL.SDL_GetMouseState(out pointerX, out pointerY);
 
                     string pointerCoordsText = $"Pointer: ({pointerX}, {pointerY})";
-                    // Define the font path and size
-                    string fontPath = "/Users/seanstoneburner/VitalMachina/Mario/Mario.Common/Assets/Roboto-Regular.ttf";
-                    int fontSize = 24; // Or any size you prefer
+
+                    string fontPath = Path.Combine(
+                        AppContext.BaseDirectory,
+                        "Assets",
+                        "Roboto-Regular.ttf"
+                    );
+                    int fontSize = 24;
 
                     // Call the updated DrawText method with fontPath and fontSize
                     await graphicsRenderer.DrawText(
@@ -121,7 +124,8 @@ namespace Mario.Native.MacOS
                 .GameObjects.OfType<TextObject>()
                 .FirstOrDefault(t => t.Id == "CollisionInfoDisplay");
 
-            if (collisionInfoDisplay == null) return;
+            if (collisionInfoDisplay == null)
+                return;
 
             StringBuilder sb = new StringBuilder();
             if (collisionResults.Any())
@@ -137,7 +141,10 @@ namespace Mario.Native.MacOS
             }
 
             // Only update the display if the text has changed and it's been at least 200 milliseconds
-            if (lastCollisionText != sb.ToString() && (DateTime.Now - lastUpdate).TotalMilliseconds > 200)
+            if (
+                lastCollisionText != sb.ToString()
+                && (DateTime.Now - lastUpdate).TotalMilliseconds > 200
+            )
             {
                 collisionInfoDisplay.Text = sb.ToString();
                 lastCollisionText = sb.ToString();
@@ -204,9 +211,7 @@ namespace Mario.Native.MacOS
                     break;
             }
         }
-
     }
-
 
     public static class InputTranslator
     {
@@ -228,6 +233,5 @@ namespace Mario.Native.MacOS
                     return null; // No action for this key
             }
         }
-
     }
 }

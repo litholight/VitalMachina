@@ -46,10 +46,10 @@ namespace Mario.Common.Initialization
             {
                 Id = "CollisionInfoDisplay",
                 Text = "No collisions yet",
-                FontPath = "/Users/seanstoneburner/VitalMachina/Mario/Mario.Common/Assets/Roboto-Regular.ttf", // Ensure this points to a valid font file
+                FontPath = Path.Combine(AppContext.BaseDirectory, "Assets", "Roboto-Regular.ttf"),
                 FontSize = 24,
-                Color = Color.White, // Assuming white color for visibility
-                X = 10, // Position the text object on the screen as desired
+                Color = Color.White,
+                X = 10,
                 Y = 40
             };
 

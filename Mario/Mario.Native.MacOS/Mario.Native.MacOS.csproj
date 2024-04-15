@@ -25,6 +25,11 @@
       <Link>Assets\%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+      <!-- Copy TTF file -->
+    <Content Include="..\Mario.Common\Assets\Roboto-Regular.ttf">
+      <Link>Assets\Roboto-Regular.ttf</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
