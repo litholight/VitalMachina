@@ -15,6 +15,7 @@ namespace Mario.Native.MacOS
     class Program
     {
         private static DateTime lastUpdate = DateTime.Now;
+        private static DateTime lastVelocityUpdate = DateTime.Now;
         private static string lastCollisionText = "";
 
         static async Task Main(string[] args)
@@ -78,6 +79,8 @@ namespace Mario.Native.MacOS
                 // Update game logic
                 gameState.Update(deltaTime);
 
+                UpdateVelocityDisplay(gameState);
+
                 // Render the current scene
                 await gameState.SceneManager.CurrentScene.Render(graphicsRenderer);
 
@@ -112,6 +115,31 @@ namespace Mario.Native.MacOS
             }
 
             graphicsRenderer.Cleanup(); // Clean up SDL resources
+        }
+
+        private static void UpdateVelocityDisplay(GameState gameState)
+        {
+            Scene currentScene = gameState.SceneManager.CurrentScene;
+            Player player = currentScene.GameObjects.OfType<Player>().FirstOrDefault();
+            TextObject velocityDisplay = currentScene
+                .GameObjects.OfType<TextObject>()
+                .FirstOrDefault(t => t.Id == "VelocityDisplay");
+
+            // Update the display only if at least 200 milliseconds have passed
+            if (
+                velocityDisplay != null
+                && player != null
+                && (DateTime.Now - lastVelocityUpdate).TotalMilliseconds > 200
+            )
+            {
+                // Format the velocity to show only two decimal places
+                string formattedVelocityX = player.PhysicsBody.VelocityX.ToString("F2");
+                string formattedVelocityY = player.PhysicsBody.VelocityY.ToString("F2");
+
+                velocityDisplay.Text =
+                    $"Velocity: (X: {formattedVelocityX}, Y: {formattedVelocityY})";
+                lastVelocityUpdate = DateTime.Now; // Update the time of the last update
+            }
         }
 
         private static void UpdateCollisionInfoDisplay(

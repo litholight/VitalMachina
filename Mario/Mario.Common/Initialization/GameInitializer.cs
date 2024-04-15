@@ -53,6 +53,17 @@ namespace Mario.Common.Initialization
                 Y = 40
             };
 
+            TextObject velocityDisplay = new TextObject
+            {
+                Id = "VelocityDisplay",
+                Text = "Velocity: (0, 0)",
+                FontPath = Path.Combine(AppContext.BaseDirectory, "Assets", "Roboto-Regular.ttf"),
+                FontSize = 24,
+                Color = Color.White,
+                X = 10, // Adjust position as needed
+                Y = 60 // Adjust position as needed
+            };
+
             var groundBody = new PhysicsBody
             {
                 Id = "Ground",
@@ -71,6 +82,7 @@ namespace Mario.Common.Initialization
             startScene.AddGameObject(enemy);
             startScene.AddGameObject(player);
             startScene.AddGameObject(collisionInfoDisplay);
+            startScene.AddGameObject(velocityDisplay);
 
             gameState.SceneManager.AddScene("StartScene", startScene);
             gameState.SceneManager.SwitchToScene("StartScene");
