@@ -65,14 +65,14 @@ namespace Mario.Common.Models
 
         private void MoveLeft()
         {
-            PhysicsBody.ApplyForce(new Vector2(-400, 0)); // Apply a leftward force
+            PhysicsBody.ApplyForce(new Vector2(-2000, 0)); // Apply a leftward force
             CurrentState = PlayerState.MovingLeft;
             CurrentAnimation = "SmallMovingLeft";
         }
 
         private void MoveRight()
         {
-            PhysicsBody.ApplyForce(new Vector2(400, 0)); // Apply a rightward force
+            PhysicsBody.ApplyForce(new Vector2(2000, 0)); // Apply a rightward force
             CurrentState = PlayerState.MovingRight;
             CurrentAnimation = "SmallMovingRight";
         }
@@ -86,7 +86,7 @@ namespace Mario.Common.Models
         {
             if (PhysicsBody.IsResting)
             {
-                var jumpForce = new Vector2(0, -2500); // Jumping force
+                var jumpForce = new Vector2(0, -15000); // Jumping force
                 PhysicsBody.ApplyForce(jumpForce);
                 PhysicsBody.IsResting = false;
             }

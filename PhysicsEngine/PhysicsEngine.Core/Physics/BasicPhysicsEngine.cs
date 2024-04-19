@@ -11,23 +11,23 @@ namespace PhysicsEngine.Core.Physics
         public void AddBody(PhysicsBody body) => _bodies.Add(body);
         public void RemoveBody(PhysicsBody body) => _bodies.Remove(body);
 
-        public void ApplyGravity(float gravityScale = 9.8f)
-        {
-            foreach (var body in _bodies.Where(b => !b.IsResting))
-            {
-                body.VelocityY += gravityScale * body.Mass;
-            }
-        }
-
         public void Update(float deltaTime)
         {
-            ApplyGravity();
+            ApplyGravity(deltaTime); // Apply gravity to all bodies first
             foreach (var body in _bodies)
             {
                 body.Update(deltaTime);
             }
             DetectCollisions();
             ResolveCollisions();
+        }
+
+        public void ApplyGravity(float deltaTime)
+        {
+            foreach (var body in _bodies.Where(b => !b.IsResting && !b.IsStatic))
+            {
+                body.VelocityY += 9.8f * deltaTime;
+            }
         }
 
         private void DetectCollisions()

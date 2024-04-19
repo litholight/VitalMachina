@@ -34,7 +34,7 @@
             // Subscribe to keyboard events for input handling
             await JSRuntime.InvokeVoidAsync("listenForKeyboardEvents", DotNetObjectReference.Create(this));
 
-             // Start the game loop
+            // Start the game loop
             await JSRuntime.InvokeVoidAsync("startGameLoop", DotNetObjectReference.Create(this));
         }
     }
@@ -62,7 +62,7 @@
 
         await UpdateAndRender();
     }
-    
+
     [JSInvokable]
     public async Task UpdateAndRender()
     {
@@ -71,7 +71,7 @@
         lastUpdate = now;
 
         // Apply gravity and update the physics engine
-        marioWorld.ApplyGravity();
+        marioWorld.ApplyGravity((float)deltaTime);
         marioWorld.Update((float)deltaTime);
 
         // Sync physics bodies with game objects

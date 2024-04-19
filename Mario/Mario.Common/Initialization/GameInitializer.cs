@@ -27,7 +27,7 @@ namespace Mario.Common.Initialization
                 Y = player.Y,
                 Height = player.Height,
                 Width = player.Width,
-                Mass = 1.0f // Arbitrary mass value
+                Mass = 50.0f // Arbitrary mass value
             };
             player.PhysicsBody = playerPhysicsBody;
             physicsEngine.AddBody(playerPhysicsBody);

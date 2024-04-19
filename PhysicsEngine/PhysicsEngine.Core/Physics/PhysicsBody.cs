@@ -15,7 +15,7 @@ namespace PhysicsEngine.Core.Physics
         public float Width { get; set; }
         public float Height { get; set; }
         public Vector2 Force { get; set; } = new Vector2(0, 0);
-        public float FrictionCoefficient { get; set; } = 3.5f; // Friction coefficient
+        public float FrictionCoefficient { get; set; } = 0.5f; // Friction coefficient
 
         public void ApplyForce(Vector2 force)
         {
