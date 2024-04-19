@@ -10,7 +10,7 @@ namespace Mario.Common.Models
         public bool IsDecelerating { get; private set; } = false;
         public PhysicsEngine.Core.Physics.PhysicsBody PhysicsBody { get; set; }
         public PlayerState CurrentState { get; private set; } = PlayerState.StandingRight;
-        private const float MaxSpeed = 400.0f; // Max speed in units per second
+        private const float MaxSpeed = 40.0f; // Max speed in units per second
 
         internal Player()
             : base()
@@ -27,7 +27,7 @@ namespace Mario.Common.Models
             ClampVelocity();
 
             // Check if player should transition to standing state during deceleration
-            if (IsDecelerating && Math.Abs(PhysicsBody.VelocityX) < 20.0f)
+            if (IsDecelerating && Math.Abs(PhysicsBody.VelocityX) < 2.0f)
             {
                 PhysicsBody.VelocityX = 0;
                 IsDecelerating = false;
@@ -65,14 +65,14 @@ namespace Mario.Common.Models
 
         private void MoveLeft()
         {
-            PhysicsBody.ApplyForce(new Vector2(-4000, 0)); // Apply a leftward force
+            PhysicsBody.ApplyForce(new Vector2(-400, 0)); // Apply a leftward force
             CurrentState = PlayerState.MovingLeft;
             CurrentAnimation = "SmallMovingLeft";
         }
 
         private void MoveRight()
         {
-            PhysicsBody.ApplyForce(new Vector2(4000, 0)); // Apply a rightward force
+            PhysicsBody.ApplyForce(new Vector2(400, 0)); // Apply a rightward force
             CurrentState = PlayerState.MovingRight;
             CurrentAnimation = "SmallMovingRight";
         }
@@ -86,7 +86,7 @@ namespace Mario.Common.Models
         {
             if (PhysicsBody.IsResting)
             {
-                var jumpForce = new Vector2(0, -25000); // Jumping force
+                var jumpForce = new Vector2(0, -2500); // Jumping force
                 PhysicsBody.ApplyForce(jumpForce);
                 PhysicsBody.IsResting = false;
             }
