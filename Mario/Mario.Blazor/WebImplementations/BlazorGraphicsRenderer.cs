@@ -19,14 +19,11 @@ namespace Mario.Blazor.WebImplementations
         public async Task InitializeCanvas(ElementReference canvasElement)
         {
             _canvasElement = canvasElement;
-            // This call was moved from Initialize to here
             await _jsRuntime.InvokeVoidAsync("initializeCanvas", _canvasElement);
         }
 
         public Task Initialize()
         {
-            // If there's any general initialization logic that doesn't specifically require the canvas element,
-            // it can go here. Otherwise, this method might not be necessary.
             return Task.CompletedTask;
         }
 
@@ -37,10 +34,16 @@ namespace Mario.Blazor.WebImplementations
                 "renderingFunctions.setCanvasBackground",
                 _canvasElement,
                 "blue"
-            ); // Example color
+            );
         }
 
-        public async Task DrawTexture(string texturePath, int x, int y, int width, int height)
+        public async Task DrawTexture(
+            string texturePath,
+            float x,
+            float y,
+            float width,
+            float height
+        )
         {
             await _jsRuntime.InvokeVoidAsync(
                 "drawTexture",
@@ -53,7 +56,7 @@ namespace Mario.Blazor.WebImplementations
             );
         }
 
-        public async Task DrawRectangle(Color color, int x, int y, int width, int height)
+        public async Task DrawRectangle(Color color, float x, float y, float width, float height)
         {
             string colorHex = color.ToHexString();
             await _jsRuntime.InvokeVoidAsync(
@@ -64,6 +67,33 @@ namespace Mario.Blazor.WebImplementations
                 width,
                 height,
                 colorHex
+            );
+        }
+
+        public async Task DrawSpritePart(
+            string imagePath,
+            int srcX,
+            int srcY,
+            int srcWidth,
+            int srcHeight,
+            float destX,
+            float destY,
+            float destWidth,
+            float destHeight
+        )
+        {
+            await _jsRuntime.InvokeVoidAsync(
+                "drawSpritePart",
+                _canvasElement,
+                imagePath,
+                srcX,
+                srcY,
+                srcWidth,
+                srcHeight,
+                destX,
+                destY,
+                destWidth,
+                destHeight
             );
         }
 
@@ -91,35 +121,8 @@ namespace Mario.Blazor.WebImplementations
 
         public Task Present()
         {
-            // This might be a no-op in Blazor as the drawing commands might be immediate.
+            // This method might be a no-op in Blazor as the drawing commands might be immediate.
             return Task.CompletedTask;
-        }
-
-        public async Task DrawSpritePart(
-            string imagePath,
-            int srcX,
-            int srcY,
-            int srcWidth,
-            int srcHeight,
-            int destX,
-            int destY,
-            int destWidth,
-            int destHeight
-        )
-        {
-            await _jsRuntime.InvokeVoidAsync(
-                "drawSpritePart",
-                _canvasElement,
-                imagePath,
-                srcX,
-                srcY,
-                srcWidth,
-                srcHeight,
-                destX,
-                destY,
-                destWidth,
-                destHeight
-            );
         }
     }
 }

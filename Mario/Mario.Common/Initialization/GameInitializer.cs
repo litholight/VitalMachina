@@ -14,7 +14,7 @@ namespace Mario.Common.Initialization
             AssetManager assets = new AssetManager();
 
             // Assuming CreateEnemy is a static method of GameObjectFactory just like CreatePlayer
-            GameObject enemy = GameObjectFactory.CreateEnemy(300, 100);
+            GameObject enemy = GameObjectFactory.CreateEnemy(4.55F, 1.52F);
 
             // Use the factory to create a player with its sprite sheet and animations ready
             Player player = GameObjectFactory.CreatePlayer(assets);
@@ -49,8 +49,8 @@ namespace Mario.Common.Initialization
                 FontPath = Path.Combine(AppContext.BaseDirectory, "Assets", "Roboto-Regular.ttf"),
                 FontSize = 24,
                 Color = Color.White,
-                X = 10,
-                Y = 40
+                X = .15F,
+                Y = .61F
             };
 
             TextObject velocityDisplay = new TextObject
@@ -60,17 +60,17 @@ namespace Mario.Common.Initialization
                 FontPath = Path.Combine(AppContext.BaseDirectory, "Assets", "Roboto-Regular.ttf"),
                 FontSize = 24,
                 Color = Color.White,
-                X = 10, // Adjust position as needed
-                Y = 60 // Adjust position as needed
+                X = .15F, // Adjust position as needed
+                Y = .91F // Adjust position as needed
             };
 
             var groundBody = new PhysicsBody
             {
                 Id = "Ground",
-                X = 0, // Assuming ground spans the entire bottom of your scene
-                Y = 600, // Position Y at the bottom of your scene
-                Width = 800, // Match your scene width
-                Height = 0, // Arbitrary height for the ground
+                X = 0F, // Assuming ground spans the entire bottom of your scene
+                Y = 9.10F, // Position Y at the bottom of your scene
+                Width = 12.12F, // Match your scene width
+                Height = 0F, // Arbitrary height for the ground
                 IsStatic = true
             };
             physicsEngine.AddBody(groundBody);

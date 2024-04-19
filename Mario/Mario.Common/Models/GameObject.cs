@@ -7,8 +7,8 @@ namespace Mario.Common.Models
     {
         public string Id { get; set; } // Unique identifier
         public GameObjectType Type { get; set; }
-        public float X { get; set; } = 20; // Initial X position
-        public float Y { get; set; } = 20; // Initial Y position
+        public float X { get; set; } = .30F; // Initial X position
+        public float Y { get; set; } = .30F; // Initial Y position
         public float Width { get; set; }
         public float Height { get; set; }
         public Color Color { get; set; } = Color.Green; // Default to red for visibility
@@ -18,6 +18,7 @@ namespace Mario.Common.Models
         private int currentFrame = 0; // Animation frame index
         private float animationTimer = 0f; // Tracks time since last frame change
         public float FrameDuration = 0.1f;
+        private const float PixelsPerMeter = 66.0f;
 
         public GameObject()
         {
@@ -65,21 +66,21 @@ namespace Mario.Common.Models
                     SpriteSheet.ImagePath,
                     FrameX,
                     FrameY,
-                    (int)SpriteSheet.FrameWidth,
+                    (int)SpriteSheet.FrameWidth, // Assuming this is in pixels and doesn't need conversion
                     (int)SpriteSheet.FrameHeight,
-                    (int)X,
-                    (int)Y,
-                    (int)Width,
-                    (int)Height
+                    X, // Pass X as is (in meters)
+                    Y, // Pass Y as is (in meters)
+                    Width, // Pass width as is (in meters)
+                    Height // Pass height as is (in meters)
                 );
             }
             else if (!string.IsNullOrEmpty(TexturePath))
             {
-                await renderer.DrawTexture(TexturePath, (int)X, (int)Y, (int)Width, (int)Height);
+                await renderer.DrawTexture(TexturePath, X, Y, Width, Height);
             }
             else
             {
-                await renderer.DrawRectangle(Color, (int)X, (int)Y, (int)Width, (int)Height);
+                await renderer.DrawRectangle(Color, X, Y, Width, Height);
             }
         }
     }

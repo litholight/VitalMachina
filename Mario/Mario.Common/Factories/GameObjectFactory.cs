@@ -29,7 +29,7 @@ namespace Mario.Common.Factories
         }
 
         // If you have additional game objects, like enemies, you can create methods for them too.
-        public static GameObject CreateEnemy(int startX, int startY)
+        public static GameObject CreateEnemy(float startX, float startY)
         {
             // Create a new GameObject instance for the enemy
             GameObject enemy = new GameObject
@@ -37,8 +37,8 @@ namespace Mario.Common.Factories
                 Type = GameObjectType.Enemy,
                 X = startX, // Set the starting X position
                 Y = startY, // Set the starting Y position
-                Width = 50, // Set the width of the enemy
-                Height = 50, // Set the height of the enemy
+                Width = .76F, // Set the width of the enemy
+                Height = .76F, // Set the height of the enemy
                 Color = Color.Orange // Give the enemy a brown color for now
             };
 

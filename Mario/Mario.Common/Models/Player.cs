@@ -16,8 +16,8 @@ namespace Mario.Common.Models
             : base()
         {
             Type = GameObjectType.Player;
-            Width = 66;
-            Height = 30;
+            Width = 1F;
+            Height = .45F;
             Color = Color.Orange;
         }
 

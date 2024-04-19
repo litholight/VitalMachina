@@ -7,18 +7,18 @@ namespace Mario.Common.Abstractions
     {
         Task Initialize();
         Task ClearScreen();
-        Task DrawTexture(string texturePath, int x, int y, int width, int height);
-        Task DrawRectangle(Color color, int x, int y, int width, int height);
+        Task DrawTexture(string texturePath, float x, float y, float width, float height);
+        Task DrawRectangle(Color color, float x, float y, float width, float height);
         Task DrawSpritePart(
             string imagePath,
-            int srcX,
+            int srcX, // These remain as pixels because they reference sprite sheet coordinates
             int srcY,
             int srcWidth,
             int srcHeight,
-            int destX,
-            int destY,
-            int destWidth,
-            int destHeight
+            float destX, // Destination coordinates need to be in meters
+            float destY,
+            float destWidth,
+            float destHeight
         );
         Task DrawText(string text, string fontPath, int fontSize, Color color, float x, float y);
         Task Present(); // Update the screen with the current rendering.

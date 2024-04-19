@@ -105,8 +105,8 @@ namespace Mario.Native.MacOS
                         fontPath,
                         fontSize,
                         Color.White,
-                        10, // X position
-                        10 // Y position
+                        .15F, // X position in meters
+                        .15F // Y position in meters
                     );
                 }
 

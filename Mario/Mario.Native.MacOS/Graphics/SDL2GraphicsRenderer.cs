@@ -1,9 +1,9 @@
 using System;
 using System.Threading.Tasks;
+using GameDevelopmentTools;
 using Mario.Common.Abstractions;
 using Mario.Common.Models;
 using Mario.Native.MacOS.NativeBindings;
-using GameDevelopmentTools;
 using SDL2;
 
 namespace Mario.Native.MacOS
@@ -13,6 +13,7 @@ namespace Mario.Native.MacOS
         private IntPtr window = IntPtr.Zero;
         private IntPtr renderer = IntPtr.Zero;
         private Dictionary<string, IntPtr> loadedTextures = new();
+        private const float PixelsPerMeter = 66.0f;
 
         public SDL2GraphicsRenderer()
         {
@@ -49,7 +50,8 @@ namespace Mario.Native.MacOS
                 renderer = SDL.SDL_CreateRenderer(
                     window,
                     -1,
-                    SDL.SDL_RendererFlags.SDL_RENDERER_ACCELERATED | SDL.SDL_RendererFlags.SDL_RENDERER_PRESENTVSYNC
+                    SDL.SDL_RendererFlags.SDL_RENDERER_ACCELERATED
+                        | SDL.SDL_RendererFlags.SDL_RENDERER_PRESENTVSYNC
                 );
                 if (renderer == IntPtr.Zero)
                 {
@@ -70,14 +72,30 @@ namespace Mario.Native.MacOS
             SDL.SDL_RenderClear(renderer);
         }
 
-        public async Task DrawTexture(string texturePath, int x, int y, int width, int height)
+        public async Task DrawTexture(
+            string texturePath,
+            float x,
+            float y,
+            float width,
+            float height
+        )
         {
+            int pixelX = (int)(x * PixelsPerMeter);
+            int pixelY = (int)(y * PixelsPerMeter);
+            int pixelWidth = (int)(width * PixelsPerMeter);
+            int pixelHeight = (int)(height * PixelsPerMeter);
             // You'll need to implement texture loading and drawing here
         }
 
         private SDL_Color ToSDLColor(Color color)
         {
-            return new SDL_Color { r = color.R, g = color.G, b = color.B, a = color.A };
+            return new SDL_Color
+            {
+                r = color.R,
+                g = color.G,
+                b = color.B,
+                a = color.A
+            };
         }
 
         public async Task DrawText(
@@ -85,25 +103,36 @@ namespace Mario.Native.MacOS
             string fontPath,
             int fontSize,
             Color color,
-            float x,
-            float y
+            float x, // x-coordinate in meters
+            float y // y-coordinate in meters
         )
         {
-            // Load the font
-            IntPtr font = SDL_ttf.TTF_OpenFont(fontPath, fontSize);
+            // Convert meter coordinates to pixel coordinates
+            int pixelX = (int)(x * PixelsPerMeter);
+            int pixelY = (int)(y * PixelsPerMeter);
+
+            // Optionally adjust the font size based on meters to pixels conversion
+            // int pixelFontSize = (int)(fontSize * PixelsPerMeter); // Uncomment if scaling font size is needed
+
+            // Load the font with the original fontSize or pixelFontSize if scaled
+            IntPtr font = SDL_ttf.TTF_OpenFont(fontPath, fontSize); // or pixelFontSize
             if (font == IntPtr.Zero)
             {
                 Console.WriteLine("Failed to load font! SDL_ttf Error: " + SDL.SDL_GetError());
                 return;
             }
 
+            // Convert your custom Color to SDL_Color
+            SDL_Color sdlColor = ToSDLColor(color);
+
             // Render the text to a surface
-            SDL_Color sdlColor = ToSDLColor(color); // Convert your custom Color to SDL_Color
             IntPtr textSurface = SDL_ttf.TTF_RenderText_Solid(font, text, sdlColor);
             if (textSurface == IntPtr.Zero)
             {
                 SDL_ttf.TTF_CloseFont(font);
-                Console.WriteLine("Unable to render text surface! SDL Error: " + SDL.SDL_GetError());
+                Console.WriteLine(
+                    "Unable to render text surface! SDL Error: " + SDL.SDL_GetError()
+                );
                 return;
             }
 
@@ -111,17 +140,26 @@ namespace Mario.Native.MacOS
             IntPtr textTexture = SDL.SDL_CreateTextureFromSurface(renderer, textSurface);
             if (textTexture == IntPtr.Zero)
             {
-                Console.WriteLine("Unable to create texture from rendered text! SDL Error: " + SDL.SDL_GetError());
+                SDL.SDL_FreeSurface(textSurface);
+                SDL_ttf.TTF_CloseFont(font);
+                Console.WriteLine(
+                    "Unable to create texture from rendered text! SDL Error: " + SDL.SDL_GetError()
+                );
+                return;
             }
-            else
-            {
-                // Get the texture dimensions
-                SDL.SDL_QueryTexture(textTexture, out _, out _, out int textWidth, out int textHeight);
 
-                // Set the rendering space and render to screen
-                SDL.SDL_Rect renderQuad = new SDL.SDL_Rect { x = (int)x, y = (int)y, w = textWidth, h = textHeight };
-                SDL.SDL_RenderCopy(renderer, textTexture, IntPtr.Zero, ref renderQuad);
-            }
+            // Get the texture dimensions
+            SDL.SDL_QueryTexture(textTexture, out _, out _, out int textWidth, out int textHeight);
+
+            // Set the rendering space and render to screen
+            SDL.SDL_Rect renderQuad = new SDL.SDL_Rect
+            {
+                x = pixelX,
+                y = pixelY,
+                w = textWidth,
+                h = textHeight
+            };
+            SDL.SDL_RenderCopy(renderer, textTexture, IntPtr.Zero, ref renderQuad);
 
             // Clean up
             SDL.SDL_FreeSurface(textSurface);
@@ -129,42 +167,57 @@ namespace Mario.Native.MacOS
             SDL_ttf.TTF_CloseFont(font);
         }
 
-        public Task DrawRectangle(Color color, int x, int y, int width, int height)
+        public Task DrawRectangle(Color color, float x, float y, float width, float height)
         {
+            // Convert from meters to pixels for rendering purposes
+            int pixelX = (int)(x * PixelsPerMeter);
+            int pixelY = (int)(y * PixelsPerMeter);
+            int pixelWidth = (int)(width * PixelsPerMeter);
+            int pixelHeight = (int)(height * PixelsPerMeter);
+
+            // Set the color for drawing
             SDL.SDL_SetRenderDrawColor(renderer, color.R, color.G, color.B, color.A);
 
+            // Define the rectangle with converted pixel coordinates
             SDL.SDL_Rect rect = new SDL.SDL_Rect
             {
-                x = x,
-                y = y,
-                w = width,
-                h = height
+                x = pixelX,
+                y = pixelY,
+                w = pixelWidth,
+                h = pixelHeight
             };
 
+            // Fill the rectangle with the specified color
             SDL.SDL_RenderFillRect(renderer, ref rect);
 
             return Task.CompletedTask;
         }
-        public Task DrawBoundingBox(Color color, int x, int y, int width, int height)
+
+        public Task DrawBoundingBox(Color color, float x, float y, float width, float height)
         {
-            // Set the color for drawing. This sets the color for the outline.
+            // Convert from meters to pixels for rendering purposes
+            int pixelX = (int)(x * PixelsPerMeter);
+            int pixelY = (int)(y * PixelsPerMeter);
+            int pixelWidth = (int)(width * PixelsPerMeter);
+            int pixelHeight = (int)(height * PixelsPerMeter);
+
+            // Set the color for drawing the outline
             SDL.SDL_SetRenderDrawColor(renderer, color.R, color.G, color.B, color.A);
 
-            // Define the rectangle (this remains the same).
+            // Define the rectangle with converted pixel coordinates
             SDL.SDL_Rect rect = new SDL.SDL_Rect
             {
-                x = x,
-                y = y,
-                w = width,
-                h = height
+                x = pixelX,
+                y = pixelY,
+                w = pixelWidth,
+                h = pixelHeight
             };
 
-            // Draw the rectangle outline instead of filling it.
+            // Draw the rectangle outline instead of filling it
             SDL.SDL_RenderDrawRect(renderer, ref rect);
 
             return Task.CompletedTask;
         }
-
 
         public Task Present()
         {
@@ -191,14 +244,14 @@ namespace Mario.Native.MacOS
 
         public async Task DrawSpritePart(
             string imagePath,
-            int srcX,
-            int srcY,
-            int srcWidth,
-            int srcHeight,
-            int destX,
-            int destY,
-            int destWidth,
-            int destHeight
+            int srcX, // Source x-coordinate in pixels (sprite sheet coordinates)
+            int srcY, // Source y-coordinate in pixels (sprite sheet coordinates)
+            int srcWidth, // Source width in pixels (sprite sheet dimensions)
+            int srcHeight, // Source height in pixels (sprite sheet dimensions)
+            float destX, // Destination x-coordinate in meters (game world coordinates)
+            float destY, // Destination y-coordinate in meters (game world coordinates)
+            float destWidth, // Destination width in meters (game world size)
+            float destHeight // Destination height in meters (game world size)
         )
         {
             // Check if the texture is already loaded
@@ -222,13 +275,19 @@ namespace Mario.Native.MacOS
                 h = srcHeight
             };
 
-            // Define the destination rectangle (where to draw on the screen)
+            // Convert destination meters to pixels
+            int pixelDestX = (int)(destX * PixelsPerMeter);
+            int pixelDestY = (int)(destY * PixelsPerMeter);
+            int pixelDestWidth = (int)(destWidth * PixelsPerMeter);
+            int pixelDestHeight = (int)(destHeight * PixelsPerMeter);
+
+            // Define the destination rectangle (where to draw on the screen) with pixel values
             SDL.SDL_Rect destRect = new SDL.SDL_Rect
             {
-                x = destX,
-                y = destY,
-                w = destWidth,
-                h = destHeight
+                x = pixelDestX,
+                y = pixelDestY,
+                w = pixelDestWidth,
+                h = pixelDestHeight
             };
 
             // Copy the specified part of the sprite sheet to the screen
