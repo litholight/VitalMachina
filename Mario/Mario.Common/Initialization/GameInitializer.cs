@@ -14,7 +14,7 @@ namespace Mario.Common.Initialization
             AssetManager assets = new AssetManager();
 
             // Assuming CreateEnemy is a static method of GameObjectFactory just like CreatePlayer
-            GameObject enemy = GameObjectFactory.CreateEnemy(assets, 4.55F, 1.52F);
+            Goomba goomba = GameObjectFactory.CreateGoomba(assets, 4.55F, 1.52F);
 
             // Use the factory to create a player with its sprite sheet and animations ready
             Player player = GameObjectFactory.CreatePlayer(assets);
@@ -32,15 +32,15 @@ namespace Mario.Common.Initialization
             player.PhysicsBody = playerPhysicsBody;
             physicsEngine.AddBody(playerPhysicsBody);
 
-            var enemyPhysicsBody = new PhysicsBody
+            var goombaPhysicsBody = new PhysicsBody
             {
-                Id = enemy.Id,
-                X = enemy.X,
-                Y = enemy.Y,
-                Height = enemy.Height,
-                Width = enemy.Width
+                Id = goomba.Id,
+                X = goomba.X,
+                Y = goomba.Y,
+                Height = goomba.Height,
+                Width = goomba.Width
             };
-            physicsEngine.AddBody(enemyPhysicsBody);
+            physicsEngine.AddBody(goombaPhysicsBody);
 
             // Add a TextObject to the scene to display collision information
             TextObject collisionInfoDisplay = new TextObject
@@ -80,7 +80,7 @@ namespace Mario.Common.Initialization
             GameState gameState = new GameState(player);
 
             Scene startScene = new Scene("StartScene");
-            startScene.AddGameObject(enemy);
+            startScene.AddGameObject(goomba);
             startScene.AddGameObject(player);
             startScene.AddGameObject(collisionInfoDisplay);
             startScene.AddGameObject(velocityDisplay);

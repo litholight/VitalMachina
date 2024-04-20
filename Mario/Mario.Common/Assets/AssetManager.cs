@@ -62,16 +62,16 @@ namespace Mario.Common.Assets
             );
 
             // Assuming frame dimensions and animation frames are known
-            var enemySpriteSheetPath = GetAssetPath("enemies-spritesheet.png");
-            var enemySpriteSheet = new SpriteSheet(enemySpriteSheetPath, 26, 26);
+            var goombaSpriteSheetPath = GetAssetPath("enemies-spritesheet.png");
+            var goombaSpriteSheet = new SpriteSheet(goombaSpriteSheetPath, 26, 26);
 
             // Define animations with appropriate frame coordinates
-            enemySpriteSheet.AddAnimation(
-                "EnemyA",
+            goombaSpriteSheet.AddAnimation(
+                "GoombaA",
                 new List<(int FrameX, int FrameY)> { (0, 0) }
             );
             spriteSheets.Add("Player", playerSpriteSheet);
-            spriteSheets.Add("Enemy", enemySpriteSheet);
+            spriteSheets.Add("Goomba", goombaSpriteSheet);
         }
 
         public SpriteSheet GetSpriteSheet(string key)
