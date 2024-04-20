@@ -205,10 +205,10 @@ namespace Mario.Native.MacOS
             foreach (var gameObject in gameObjects)
             {
                 // Cast the float values to int before passing them to DrawRectangle
-                int x = (int)gameObject.X;
-                int y = (int)gameObject.Y;
-                int width = (int)gameObject.Width;
-                int height = (int)gameObject.Height;
+                float x = gameObject.X;
+                float y = gameObject.Y;
+                float width = gameObject.Width;
+                float height = gameObject.Height;
 
                 graphicsRenderer.DrawBoundingBox(Color.Red, x, y, width, height);
             }

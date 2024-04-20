@@ -10,7 +10,7 @@ namespace Mario.Common.Models
         public bool IsDecelerating { get; private set; } = false;
         public PhysicsEngine.Core.Physics.PhysicsBody PhysicsBody { get; set; }
         public PlayerState CurrentState { get; private set; } = PlayerState.StandingRight;
-        private const float MaxSpeed = 40.0f; // Max speed in units per second
+        private const float MaxSpeed = 30.0f; // Max speed in units per second
 
         internal Player()
             : base()

@@ -14,7 +14,7 @@ namespace Mario.Common.Initialization
             AssetManager assets = new AssetManager();
 
             // Assuming CreateEnemy is a static method of GameObjectFactory just like CreatePlayer
-            GameObject enemy = GameObjectFactory.CreateEnemy(4.55F, 1.52F);
+            GameObject enemy = GameObjectFactory.CreateEnemy(assets, 4.55F, 1.52F);
 
             // Use the factory to create a player with its sprite sheet and animations ready
             Player player = GameObjectFactory.CreatePlayer(assets);

@@ -29,7 +29,7 @@ namespace Mario.Common.Factories
         }
 
         // If you have additional game objects, like enemies, you can create methods for them too.
-        public static GameObject CreateEnemy(float startX, float startY)
+        public static GameObject CreateEnemy(AssetManager assets, float startX, float startY)
         {
             // Create a new GameObject instance for the enemy
             GameObject enemy = new GameObject
@@ -39,7 +39,9 @@ namespace Mario.Common.Factories
                 Y = startY, // Set the starting Y position
                 Width = .76F, // Set the width of the enemy
                 Height = .76F, // Set the height of the enemy
-                Color = Color.Orange // Give the enemy a brown color for now
+                Color = Color.Orange, // Give the enemy a brown color for now
+                SpriteSheet = assets.GetSpriteSheet("Enemy"),
+                CurrentAnimation = "EnemyA"
             };
 
             // If you have specific logic or properties for enemies, you can extend the GameObject class and create an Enemy class

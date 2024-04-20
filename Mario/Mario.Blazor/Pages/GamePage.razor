@@ -70,8 +70,6 @@
         var deltaTime = (now - lastUpdate).TotalMilliseconds / 1000.0;
         lastUpdate = now;
 
-        // Apply gravity and update the physics engine
-        marioWorld.ApplyGravity((float)deltaTime);
         marioWorld.Update((float)deltaTime);
 
         // Sync physics bodies with game objects
