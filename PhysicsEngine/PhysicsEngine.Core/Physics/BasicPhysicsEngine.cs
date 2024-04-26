@@ -33,34 +33,8 @@ namespace PhysicsEngine.Core.Physics
         private void DetectCollisions()
         {
             CollisionResults.Clear();
-            var ground = _bodies.FirstOrDefault(b => b.IsStatic && b.Id == "Ground"); // Assuming "Ground" is the ID for the ground object
 
-            // Handling ground collision first to manage resting state properly
-            foreach (var body in _bodies.Where(b => !b.IsStatic))
-            {
-                if (body.Y + body.Height >= ground.Y)
-                {
-                    if (!body.IsResting)
-                    {
-                        body.Y = ground.Y - body.Height; // Adjust Y position to sit on the ground
-                        body.VelocityY = 0; // Stop downward movement
-                        body.IsResting = true;
-
-                        CollisionResults.Add(new CollisionResult
-                        {
-                            IsColliding = true,
-                            Direction = CollisionDirection.Bottom,
-                            OtherBody = ground
-                        });
-                    }
-                }
-                else
-                {
-                    body.IsResting = false;
-                }
-            }
-
-            // Check collisions between all bodies, skipping unnecessary checks
+            // Check collisions between all bodies, including ground
             for (int i = 0; i < _bodies.Count; i++)
             {
                 for (int j = i + 1; j < _bodies.Count; j++)
@@ -68,7 +42,8 @@ namespace PhysicsEngine.Core.Physics
                     var bodyA = _bodies[i];
                     var bodyB = _bodies[j];
 
-                    if (bodyA == bodyB || (bodyA.IsStatic && bodyB.IsStatic)) continue;
+                    // Skip checking between two static bodies
+                    if (bodyA.IsStatic && bodyB.IsStatic) continue;
 
                     var collisionResult = CheckCollision(bodyA, bodyB);
                     if (collisionResult.IsColliding)
@@ -79,10 +54,38 @@ namespace PhysicsEngine.Core.Physics
             }
         }
 
-
         private void ResolveCollisions()
         {
-            // Placeholder for collision resolution logic, which should adjust positions and velocities
+            foreach (var result in CollisionResults)
+            {
+                if (!result.IsColliding) continue;
+
+                // Handle the collision from the perspective of each body
+                HandleCollisionResponse(result.Body, result.Direction);
+                HandleCollisionResponse(result.OtherBody, result.OtherBodyDirection);
+            }
+        }
+
+        private void HandleCollisionResponse(PhysicsBody body, CollisionDirection direction)
+        {
+            if (body.IsStatic) return; // Static bodies do not respond to forces.
+
+            // Determine if the collision is vertical (Top or Bottom) or horizontal (Left or Right)
+            switch (direction)
+            {
+                case CollisionDirection.Top:
+                case CollisionDirection.Bottom:
+                    body.VelocityY = 0; // Stop vertical movement
+                    if (direction == CollisionDirection.Bottom)
+                    {
+                        body.IsResting = true; // Set resting state when on a surface
+                    }
+                    break;
+                case CollisionDirection.Left:
+                case CollisionDirection.Right:
+                    body.VelocityX = 0; // Stop horizontal movement
+                    break;
+            }
         }
 
         private CollisionResult CheckCollision(PhysicsBody bodyA, PhysicsBody bodyB)
@@ -93,16 +96,20 @@ namespace PhysicsEngine.Core.Physics
             if (!isColliding)
                 return new CollisionResult { IsColliding = false };
 
-            // Determine collision direction
-            CollisionDirection direction = DetermineCollisionDirection(bodyA, bodyB);
+            // Determine collision direction for each body
+            CollisionDirection directionA = DetermineCollisionDirection(bodyA, bodyB);
+            CollisionDirection directionB = DetermineCollisionDirection(bodyB, bodyA); // Notice the swapped order
 
             return new CollisionResult
             {
                 IsColliding = true,
-                Direction = direction,
+                Direction = directionA,
+                OtherBodyDirection = directionB,
+                Body = bodyA,
                 OtherBody = bodyB
             };
         }
+
 
         private CollisionDirection DetermineCollisionDirection(PhysicsBody bodyA, PhysicsBody bodyB)
         {
@@ -121,19 +128,19 @@ namespace PhysicsEngine.Core.Physics
             float overlapY = (bodyA.Height / 2 + bodyB.Height / 2) - Math.Abs(dy);
 
             // Use the overlaps to determine the direction
-            if (overlapX >= overlapY)
+            if (overlapX > overlapY)
             {
                 if (dy > 0)
-                    return CollisionDirection.Top;
+                    return CollisionDirection.Bottom; // Body A is above Body B
                 else
-                    return CollisionDirection.Bottom;
+                    return CollisionDirection.Top; // Body A is below Body B
             }
             else
             {
                 if (dx > 0)
-                    return CollisionDirection.Left;
+                    return CollisionDirection.Right; // Body A is to the left of Body B
                 else
-                    return CollisionDirection.Right;
+                    return CollisionDirection.Left;
             }
         }
 

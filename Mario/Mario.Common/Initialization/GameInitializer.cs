@@ -71,7 +71,7 @@ namespace Mario.Common.Initialization
                 X = 0F, // Assuming ground spans the entire bottom of your scene
                 Y = 9.10F, // Position Y at the bottom of your scene
                 Width = 12.12F, // Match your scene width
-                Height = 0F, // Arbitrary height for the ground
+                Height = 12F, // Arbitrary height for the ground
                 IsStatic = true
             };
             physicsEngine.AddBody(groundBody);
