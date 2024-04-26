@@ -60,31 +60,52 @@ namespace PhysicsEngine.Core.Physics
             {
                 if (!result.IsColliding) continue;
 
-                // Handle the collision from the perspective of each body
-                HandleCollisionResponse(result.Body, result.Direction);
-                HandleCollisionResponse(result.OtherBody, result.OtherBodyDirection);
+                // Call the response handler for each body with the corresponding other body
+                HandleCollisionResponse(result.Body, result.OtherBody, result.Direction);
+                HandleCollisionResponse(result.OtherBody, result.Body, result.OtherBodyDirection);
             }
         }
 
-        private void HandleCollisionResponse(PhysicsBody body, CollisionDirection direction)
+        private void HandleCollisionResponse(PhysicsBody body, PhysicsBody otherBody, CollisionDirection direction)
         {
             if (body.IsStatic) return; // Static bodies do not respond to forces.
 
-            // Determine if the collision is vertical (Top or Bottom) or horizontal (Left or Right)
-            switch (direction)
+            // If the other body is static, we may want to completely stop the body's movement or apply specific logic
+            if (otherBody.IsStatic)
             {
-                case CollisionDirection.Top:
-                case CollisionDirection.Bottom:
-                    body.VelocityY = 0; // Stop vertical movement
-                    if (direction == CollisionDirection.Bottom)
-                    {
-                        body.IsResting = true; // Set resting state when on a surface
-                    }
-                    break;
-                case CollisionDirection.Left:
-                case CollisionDirection.Right:
-                    body.VelocityX = 0; // Stop horizontal movement
-                    break;
+                // Stop all movement if the other body is static
+                switch (direction)
+                {
+                    case CollisionDirection.Top:
+                    case CollisionDirection.Bottom:
+                        body.VelocityY = 0; // Stop vertical movement
+                        if (direction == CollisionDirection.Bottom)
+                        {
+                            body.IsResting = true; // Set resting state when on a surface
+                        }
+                        break;
+                    case CollisionDirection.Left:
+                    case CollisionDirection.Right:
+                        body.VelocityX = 0; // Stop horizontal movement
+                        break;
+                }
+            }
+            else
+            {
+                // Handle collisions with other dynamic bodies differently
+                // You may want to include some form of elastic collision response here
+                // For simplicity, the below example just reduces the velocity by half as a placeholder
+                switch (direction)
+                {
+                    case CollisionDirection.Top:
+                    case CollisionDirection.Bottom:
+                        body.VelocityY *= 0.5f; // Reduce vertical velocity
+                        break;
+                    case CollisionDirection.Left:
+                    case CollisionDirection.Right:
+                        body.VelocityX *= 0.5f; // Reduce horizontal velocity
+                        break;
+                }
             }
         }
 
